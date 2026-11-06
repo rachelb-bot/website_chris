@@ -45,10 +45,11 @@ On another host, point the form's `action` at Formspree or similar, in `estimate
 
 Everything below lives in `src/config.mjs` unless noted.
 
-- [ ] **Phone number.** Currently `(916) 555-0180`, which is a fictional placeholder
-- [ ] **CSLB license number.** Currently `#0000000`
+- [x] **Phone number:** (530) 368-5077
+- [x] **CSLB license number:** #1128029 (confirm the class is C-10)
 - [ ] **Email address and domain.** Placeholder `off80electric.com`; register the domain
-- [ ] **Owner's name** (`Chris` is assumed) and founding year
+- [x] **Owner's name:** Chris Bodily
+- [ ] **Founding year**
 - [ ] **Business hours and after-hours/emergency policy.** Confirm or edit `hoursText`
 - [ ] **Confirm the typical cost ranges** in `src/services.mjs`. They're reasonable regional estimates, but they're his prices to set
 - [ ] **Confirm drive times** and towns in `src/cities.mjs`; add or remove towns freely (each one is a single entry)

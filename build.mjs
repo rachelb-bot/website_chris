@@ -48,6 +48,7 @@ const businessSchema = () => ({
   image: fullUrl('/assets/og.png'),
   logo: fullUrl('/assets/logo.png'),
   priceRange: '$$',
+  founder: { '@type': 'Person', name: B.owner, jobTitle: 'Owner and licensed electrician' },
   address: {
     '@type': 'PostalAddress',
     ...(B.street ? { streetAddress: B.street } : {}),

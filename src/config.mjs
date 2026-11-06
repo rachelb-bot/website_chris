@@ -7,13 +7,13 @@ export const business = {
   name: 'Off 80 Electric',
   formerly: 'Northern Spark Electric', // shown in footer + schema alternateName; set to '' to hide
   tagline: 'Licensed electrician for the I-80 corridor, Sacramento to Colfax',
-  owner: 'Chris', // TODO: confirm owner's full name
+  owner: 'Chris Bodily',
   domain: 'https://www.off80electric.com', // TODO: final domain (no trailing slash)
-  phone: '(916) 555-0180', // TODO: real phone number (555-01xx is a reserved fictional number)
-  phoneE164: '+19165550180', // TODO: same number in +1XXXXXXXXXX form
+  phone: '(530) 368-5077',
+  phoneE164: '+15303685077',
   email: 'hello@off80electric.com', // TODO: real email
-  license: 'CA C-10 License #0000000', // TODO: real CSLB license number
-  licenseNumber: '0000000', // TODO: digits only, used for the CSLB lookup link
+  license: 'CA C-10 License #1128029', // TODO: confirm the license class is C-10
+  licenseNumber: '1128029',
   street: '', // leave blank to run as a service-area business (address hidden), or add a street
   city: 'Newcastle',
   region: 'CA',

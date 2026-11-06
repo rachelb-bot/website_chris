@@ -6,7 +6,7 @@ rmSync(OUT, { recursive: true, force: true });
 mkdirSync(OUT, { recursive: true });
 cpSync(join(SRC, 'assets'), join(OUT, 'assets'), { recursive: true });
 cpSync(join(SRC, 'favicon.svg'), join(OUT, 'favicon.svg'));
-const banner = `<div style="background:#F3C433;color:#22302A;font:600 15px/1.4 Archivo,system-ui,sans-serif;padding:8px max(16px, env(safe-area-inset-left, 0px));text-align:center">Website preview. The phone number, license number and email are placeholders until Chris confirms them.</div>`;
+const banner = `<div style="background:#F3C433;color:#22302A;font:600 15px/1.4 Archivo,system-ui,sans-serif;padding:8px max(16px, env(safe-area-inset-left, 0px));text-align:center">Website preview. The email address is still a placeholder.</div>`;
 const formScript = `<script>document.addEventListener('submit',function(e){e.preventDefault();var f=e.target;f.innerHTML='<p style="grid-column:1/-1;font-size:1.2rem;font-weight:700">Preview only: once the site is live, this form sends the request straight to Chris.</p>';});</script>`;
 const files = [];
 (function walk(d) { for (const f of readdirSync(d)) { const p = join(d, f); if (statSync(p).isDirectory()) { if (f !== 'assets') walk(p); } else if (f.endsWith('.html')) files.push(p); } })(SRC);
