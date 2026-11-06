@@ -1,0 +1,53 @@
+<!-- @dsCard height=288 -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Off 80 Electric</title>
+<style>
+  html, body { margin: 0; height: 100%; }
+  body { background: var(--surface); color: var(--text); font-family: var(--font-sans); overflow: hidden; }
+  .cover { position: relative; width: 960px; height: 288px; overflow: hidden; }
+  .art { position: absolute; top: 0; left: 480px; width: 480px; height: 288px; overflow: hidden; }
+  .art svg { display: block; width: 480px; height: 288px; }
+  .inv { fill: var(--inverse); }
+  .rust { fill: var(--rust); }
+  .tan { fill: var(--tan); }
+  .snow { fill: var(--snow); }
+  .blk { rx: var(--radius-sm); }
+  .ring { fill: none; stroke: var(--rust); stroke-width: var(--stroke-band); }
+  .ring-in { fill: none; stroke: var(--tan); stroke-width: var(--stroke-band-inner); }
+  .words { position: absolute; left: var(--space-6); bottom: var(--space-6); max-width: 440px; }
+  .name { margin: 0; font-family: var(--font-slab); font-weight: 400; font-size: 88px; line-height: .95; color: var(--heading); }
+  .tag { margin: var(--space-2) 0 0 3px; font-size: 14px; line-height: 20px; color: var(--text-muted); }
+</style>
+</head>
+<body>
+<div class="cover">
+<div class="art" aria-hidden="true">
+<svg viewBox="0 0 480 288" width="480" height="288">
+<!--
+  blocks      snow 80×80 · tan 80×128 · rust 80×192 · inverse 200 wide, bleeding off the top and right edge — the identity colours, about 40% of 960×288
+  arrangement a staircase climbing left to right with bottoms on one line space-6 above the edge, like the I-80 climb from the valley to the Sierra
+  pattern     the badge ring, from "rust ring, tan lettering": a stroke-band rust ring, a stroke-band-inner tan ring and an inner rust ring cut into the inverse slab, clipped by its edge
+  scales      widths space-20; gutters space-4; bottom inset space-6; heights space-20, space-8×4, space-12×4; corners radius-sm; ring strokes stroke-band and stroke-band-inner
+-->
+<defs><clipPath id="slab"><rect x="312" y="-40" width="200" height="304" rx="4"/></clipPath></defs>
+<rect class="snow blk" x="24" y="184" width="80" height="80" rx="4"/>
+<rect class="tan blk" x="120" y="136" width="80" height="128" rx="4"/>
+<rect class="rust blk" x="216" y="72" width="80" height="192" rx="4"/>
+<rect class="inv blk" x="312" y="-40" width="200" height="304" rx="4"/>
+<g clip-path="url(#slab)">
+  <circle class="ring" cx="420" cy="150" r="78"/>
+  <circle class="ring-in" cx="420" cy="150" r="66"/>
+  <circle class="ring" cx="420" cy="150" r="48"/>
+</g>
+</svg>
+</div>
+<div class="words">
+  <h1 class="name">Off 80<br>Electric</h1>
+  <p class="tag">Licensed electrician for the I-80 corridor, Sacramento to Colfax.</p>
+</div>
+</div>
+</body>
+</html>

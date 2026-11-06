@@ -1,0 +1,291 @@
+{
+  "v": 3,
+  "layout": "files",
+  "createdOnFiles": {
+    "v": 1,
+    "at": "2026-11-06T14:54:29Z"
+  },
+  "title": "Off 80 Electric",
+  "namespace": "Off80",
+  "libraries": [
+    {
+      "name": "react",
+      "version": "18"
+    },
+    {
+      "name": "react-dom",
+      "version": "18"
+    }
+  ],
+  "sections": {},
+  "groups": [
+    "Logos",
+    "Icons"
+  ],
+  "assetGroups": {
+    "Logos": {
+      "name": "Logos",
+      "tile": "l",
+      "order": [
+        "badge-off80.svg",
+        "badge-off80.png",
+        "lockup-light.svg",
+        "lockup-dark.svg",
+        "mark.svg",
+        "badge-northern-spark.svg",
+        "badge-northern-spark.png"
+      ],
+      "files": {
+        "badge-off80.svg": {
+          "name": "badge-off80.svg",
+          "blob": "f441760b57edb732704aa3c2b91ac035",
+          "size": 25009,
+          "type": "image/svg+xml"
+        },
+        "badge-off80.png": {
+          "name": "badge-off80.png",
+          "blob": "a71b92c3a5ab6376545a9d21dedad4e4",
+          "size": 362907,
+          "type": "image/png"
+        },
+        "lockup-light.svg": {
+          "name": "lockup-light.svg",
+          "blob": "2901339adbbed51ea1632762a8de9497",
+          "size": 28609,
+          "type": "image/svg+xml"
+        },
+        "lockup-dark.svg": {
+          "name": "lockup-dark.svg",
+          "blob": "8f97e715808acfcf715ec911771da9b2",
+          "size": 28597,
+          "type": "image/svg+xml"
+        },
+        "mark.svg": {
+          "name": "mark.svg",
+          "blob": "06dbd5f105760f4d451a9670b40e2720",
+          "size": 837,
+          "type": "image/svg+xml"
+        },
+        "badge-northern-spark.svg": {
+          "name": "badge-northern-spark.svg",
+          "blob": "e37e2683937efc51bb7a752899aa00af",
+          "size": 27244,
+          "type": "image/svg+xml"
+        },
+        "badge-northern-spark.png": {
+          "name": "badge-northern-spark.png",
+          "blob": "7a32328f673e4411e857291a82290f28",
+          "size": 386634,
+          "type": "image/png"
+        }
+      }
+    },
+    "Icons": {
+      "name": "Icons",
+      "tile": "s",
+      "order": [
+        "panel-upgrades.svg",
+        "ev-charger-installation.svg",
+        "generator-installation.svg",
+        "electrical-repair.svg",
+        "emergency-electrician.svg",
+        "home-rewiring.svg",
+        "lighting-installation.svg",
+        "outbuilding-well-pump-wiring.svg",
+        "hot-tub-spa-wiring.svg",
+        "solar-battery-electrical.svg",
+        "electrical-inspection.svg",
+        "commercial-electrical.svg",
+        "costs.svg",
+        "safety.svg",
+        "outages.svg",
+        "ev-solar.svg",
+        "older.svg",
+        "rules.svg",
+        "check.svg",
+        "pin.svg",
+        "clock.svg",
+        "permit.svg",
+        "tower.svg",
+        "mountain.svg",
+        "phone.svg",
+        "mail.svg",
+        "quote.svg"
+      ],
+      "files": {
+        "panel-upgrades.svg": {
+          "name": "panel-upgrades.svg",
+          "blob": "bbb12562f6fad45e02c4727a0ad1b72c",
+          "size": 1760,
+          "type": "image/svg+xml"
+        },
+        "ev-charger-installation.svg": {
+          "name": "ev-charger-installation.svg",
+          "blob": "abe832b3fedf0fba8e0e16227d02ad42",
+          "size": 1053,
+          "type": "image/svg+xml"
+        },
+        "generator-installation.svg": {
+          "name": "generator-installation.svg",
+          "blob": "2d594e86f2ea57d15657ca2e1fe98aa5",
+          "size": 1014,
+          "type": "image/svg+xml"
+        },
+        "electrical-repair.svg": {
+          "name": "electrical-repair.svg",
+          "blob": "637693b6d5c768b560be0b7758d2439e",
+          "size": 948,
+          "type": "image/svg+xml"
+        },
+        "emergency-electrician.svg": {
+          "name": "emergency-electrician.svg",
+          "blob": "c3ceda3354612ac28a177374b8f89111",
+          "size": 359,
+          "type": "image/svg+xml"
+        },
+        "home-rewiring.svg": {
+          "name": "home-rewiring.svg",
+          "blob": "bb3813c52f4300b665d0c0a6f92fc29a",
+          "size": 1384,
+          "type": "image/svg+xml"
+        },
+        "lighting-installation.svg": {
+          "name": "lighting-installation.svg",
+          "blob": "bc68b8a9b0bd7cdd6176b854ebd00297",
+          "size": 653,
+          "type": "image/svg+xml"
+        },
+        "outbuilding-well-pump-wiring.svg": {
+          "name": "outbuilding-well-pump-wiring.svg",
+          "blob": "2f2829ec30378a3a9b9d929f9348cad8",
+          "size": 921,
+          "type": "image/svg+xml"
+        },
+        "hot-tub-spa-wiring.svg": {
+          "name": "hot-tub-spa-wiring.svg",
+          "blob": "1f686ffe3ccdd944ee26dcda162b829c",
+          "size": 718,
+          "type": "image/svg+xml"
+        },
+        "solar-battery-electrical.svg": {
+          "name": "solar-battery-electrical.svg",
+          "blob": "e9a4181216f2e28c7af778f61b9b1495",
+          "size": 928,
+          "type": "image/svg+xml"
+        },
+        "electrical-inspection.svg": {
+          "name": "electrical-inspection.svg",
+          "blob": "736ef545095c681f549bfffe1f19c0ff",
+          "size": 1134,
+          "type": "image/svg+xml"
+        },
+        "commercial-electrical.svg": {
+          "name": "commercial-electrical.svg",
+          "blob": "8b9da912db346787d78543b06d32bccb",
+          "size": 826,
+          "type": "image/svg+xml"
+        },
+        "costs.svg": {
+          "name": "costs.svg",
+          "blob": "813cf51b2fd1aa7387e958b9de5b59e0",
+          "size": 511,
+          "type": "image/svg+xml"
+        },
+        "safety.svg": {
+          "name": "safety.svg",
+          "blob": "968dd942962b30e4f1c1907383a4a08a",
+          "size": 397,
+          "type": "image/svg+xml"
+        },
+        "outages.svg": {
+          "name": "outages.svg",
+          "blob": "591ed81501a62bb4cd9cf41930c70a7b",
+          "size": 589,
+          "type": "image/svg+xml"
+        },
+        "ev-solar.svg": {
+          "name": "ev-solar.svg",
+          "blob": "898c81d176e132567f7492b785bf1f0f",
+          "size": 883,
+          "type": "image/svg+xml"
+        },
+        "older.svg": {
+          "name": "older.svg",
+          "blob": "fd4f9ade07dbb98227633988195e80db",
+          "size": 912,
+          "type": "image/svg+xml"
+        },
+        "rules.svg": {
+          "name": "rules.svg",
+          "blob": "8a4e9d097b3a5a52ff929783c21fc271",
+          "size": 696,
+          "type": "image/svg+xml"
+        },
+        "check.svg": {
+          "name": "check.svg",
+          "blob": "6304fe2b09dd7d4d884a691dc0270fd6",
+          "size": 260,
+          "type": "image/svg+xml"
+        },
+        "pin.svg": {
+          "name": "pin.svg",
+          "blob": "fcbc03cdd8b09f373f3c5fb91c27fe01",
+          "size": 384,
+          "type": "image/svg+xml"
+        },
+        "clock.svg": {
+          "name": "clock.svg",
+          "blob": "157302685dedcefac5b7a7895dd204aa",
+          "size": 343,
+          "type": "image/svg+xml"
+        },
+        "permit.svg": {
+          "name": "permit.svg",
+          "blob": "b1faf9e168de586bf0d0024211c377db",
+          "size": 509,
+          "type": "image/svg+xml"
+        },
+        "tower.svg": {
+          "name": "tower.svg",
+          "blob": "e743f039865323d496e52c8689b9f6cd",
+          "size": 348,
+          "type": "image/svg+xml"
+        },
+        "mountain.svg": {
+          "name": "mountain.svg",
+          "blob": "0fb7be9bdd500d0c3e6dae94689856c8",
+          "size": 434,
+          "type": "image/svg+xml"
+        },
+        "phone.svg": {
+          "name": "phone.svg",
+          "blob": "ba9d5faf7d07f494a989f982432b8e96",
+          "size": 279,
+          "type": "image/svg+xml"
+        },
+        "mail.svg": {
+          "name": "mail.svg",
+          "blob": "1933e4658191fde7d0d4e4e6b89b8bce",
+          "size": 362,
+          "type": "image/svg+xml"
+        },
+        "quote.svg": {
+          "name": "quote.svg",
+          "blob": "073563c8ad1910518fef607f95abc802",
+          "size": 666,
+          "type": "image/svg+xml"
+        }
+      }
+    }
+  },
+  "blobs": {},
+  "docs": {
+    "sections": []
+  },
+  "lastChange": {
+    "by": "Rachel",
+    "via": "Claude Code",
+    "at": "2026-11-06T14:54:29Z",
+    "note": "First version, built from the Off 80 Electric website"
+  }
+}

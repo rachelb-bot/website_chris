@@ -759,3 +759,5 @@ svg { --ic-line: var(--night); --ic-a: var(--tan); --ic-b: var(--rust); --ic-s: 
 .hero-home .route-caption { padding-bottom: 0; }
 @media (max-width: 760px) { .also-serving { padding-left: 0; flex-direction: column; align-items: flex-start; } .also-serving a { padding: 0.55rem 0.9rem; } }
 .route-caption, .also-serving { position: relative; z-index: 1; }
+/* Focus ring: rust on light grounds, tan on the dark night bands (rust is under 3:1 there) */
+.hero :focus-visible, .estimate :focus-visible, .site-footer :focus-visible, .topbar :focus-visible, .featured :focus-visible, .area-map :focus-visible { outline-color: var(--tan); }

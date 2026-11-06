@@ -759,6 +759,8 @@ svg { --ic-line: var(--night); --ic-a: var(--tan); --ic-b: var(--rust); --ic-s: 
 .hero-home .route-caption { padding-bottom: 0; }
 @media (max-width: 760px) { .also-serving { padding-left: 0; flex-direction: column; align-items: flex-start; } .also-serving a { padding: 0.55rem 0.9rem; } }
 .route-caption, .also-serving { position: relative; z-index: 1; }
+/* Focus ring: rust on light grounds, tan on the dark night bands (rust is under 3:1 there) */
+.hero :focus-visible, .estimate :focus-visible, .site-footer :focus-visible, .topbar :focus-visible, .featured :focus-visible, .area-map :focus-visible { outline-color: var(--tan); }
 
 body{background:linear-gradient(180deg,#0F2423,#16302F);margin:0;width:1200px;height:630px;overflow:hidden;color:#F2EBDA;border-bottom:8px solid #B9481F}
 .og{padding:54px 64px 0;position:relative}.og h1{font:400 74px/1 'Alfa Slab One';color:#E7CF97;margin:0 0 16px}

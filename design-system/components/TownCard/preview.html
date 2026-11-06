@@ -1,0 +1,12 @@
+<!-- @dsCard group="Content" height=300 -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Preview</title></head>
+<body>
+<div id="root" class="o8-pad"></div>
+<script>
+  var O = window.Off80, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div', {className:'o8-row', style:{alignItems:'stretch'}}, h(O.TownCard, {name:'Newcastle', home:true, utility:'PG&E', blurb:'Newcastle is home. Our shop is here, halfway up the I-80 climb.', services:[{icon:'generator-installation', label:'Generators'},{icon:'panel-upgrades', label:'Panel upgrades'}]}), h(O.TownCard, {name:'Roseville', utility:'Roseville Electric Utility', blurb:'Roseville has its own electric utility, which changes how upgrades get scheduled.', services:[{icon:'ev-charger-installation', label:'EV chargers'},{icon:'solar-battery-electrical', label:'Solar & batteries'}]})));
+</script>
+</body>
+</html>
