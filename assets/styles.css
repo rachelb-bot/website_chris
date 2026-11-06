@@ -749,3 +749,13 @@ svg { --ic-line: var(--night); --ic-a: var(--tan); --ic-b: var(--rust); --ic-s: 
 @media (max-width: 600px) { .mega-svc .mega-list.two { columns: 1; } }
 @media (max-width: 760px) { .toc { flex-wrap: nowrap; } .toc ul { min-width: 0; } }
 @media (max-width: 760px) { .hero-grid .medal { width: 72px; height: 72px; box-shadow: 0 0 0 3px var(--night), 0 0 0 6px var(--rust); } }
+
+/* Hero: towns off the main route */
+.also-serving { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 0.9rem; padding: 0 0 2.5rem calc(96 / 1200 * 100%); margin-top: 0.9rem; }
+.also-h { font-weight: 700; color: var(--tan); font-size: 0.98rem; }
+.also-serving ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.also-serving a { display: inline-block; padding: 0.4rem 0.85rem; border: 1.5px solid var(--night-line); border-radius: 999px; color: var(--on-night) !important; text-decoration: none; font-weight: 700; font-size: 0.95rem; background: rgba(15, 36, 35, 0.6); }
+.also-serving a:hover { border-color: var(--tan); color: var(--tan) !important; }
+.hero-home .route-caption { padding-bottom: 0; }
+@media (max-width: 760px) { .also-serving { padding-left: 0; flex-direction: column; align-items: flex-start; } .also-serving a { padding: 0.55rem 0.9rem; } }
+.route-caption, .also-serving { position: relative; z-index: 1; }

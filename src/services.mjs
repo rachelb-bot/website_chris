@@ -33,7 +33,7 @@ export const services = [
         'Federal Pacific Electric (FPE) Stab-Lok and Zinsco panels have well-documented breaker failures: breakers that don’t trip under overload. Both were common in 1960s–80s tract homes across Sacramento and Placer County. If you have one, replacing it is a safety fix, not a cosmetic one.',
       ]},
       { h: 'Who you’ll deal with', p: [
-        'We pull the permit with your city or county, schedule the utility disconnect, do the work, and meet the inspector. In Roseville that means Roseville Electric Utility; in Sacramento and Citrus Heights it’s SMUD; almost everywhere else on our route it’s PG&E. Each has its own release process, and that coordination is usually what decides the timeline.',
+        'We pull the permit with your city or county, schedule the utility disconnect, do the work, and meet the inspector. In Roseville that means Roseville Electric Utility; in Sacramento and the surrounding county it’s SMUD; almost everywhere else on our route it’s PG&E. Each has its own release process, and that coordination is usually what decides the timeline.',
       ]},
     ],
     faqs: [
@@ -74,7 +74,7 @@ export const services = [
         'If a load calculation shows your service can’t carry a charger, there are options short of a full panel upgrade: a lower-amperage circuit, a load-management device that throttles the charger when the house is busy, or a circuit-sharing setup for two EVs. We’ll price the options side by side.',
       ]},
       { h: 'Rebates worth checking', p: [
-        'SMUD (Sacramento, Citrus Heights) and Roseville Electric have both offered EV charger and panel incentives in recent years. PG&E customers should check current programs too. Rebate rules change often, so we confirm what’s live before you buy hardware.',
+        'SMUD (Sacramento County) and Roseville Electric have both offered EV charger and panel incentives in recent years. PG&E customers should check current programs too. Rebate rules change often, so we confirm what’s live before you buy hardware.',
       ]},
     ],
     faqs: [

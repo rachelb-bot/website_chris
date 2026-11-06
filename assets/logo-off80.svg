@@ -5,7 +5,7 @@
     <radialGradient id="o80-flash" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
     <linearGradient id="o80-snow" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EEF3F4"/><stop offset=".55" stop-color="#C9D7DD"/><stop offset="1" stop-color="#5D7682"/></linearGradient>
     <clipPath id="o80-scene"><circle cx="200" cy="200" r="131"/></clipPath>
-    <path id="o80-top" d="M46,200 A154,154 0 0 1 354,200"/>
+    <path id="o80-top" d="M53,200 A147,147 0 0 1 347,200"/>
     <path id="o80-bot" d="M22,200 A178,178 0 0 0 378,200"/>
   </defs>
 
@@ -13,7 +13,7 @@
   <circle cx="200" cy="200" r="197" fill="#1B3735"/>
   <circle cx="200" cy="200" r="190" fill="none" stroke="#C2552A" stroke-width="6"/>
   <circle cx="200" cy="200" r="136" fill="none" stroke="#C2552A" stroke-width="7"/>
-  <text font-family="'Alfa Slab One', Rockwell, 'Roboto Slab', Georgia, serif" font-size="46" fill="#E9D3A0" letter-spacing="11"><textPath href="#o80-top" startOffset="50%" text-anchor="middle">OFF 80</textPath></text>
+  <text font-family="'Alfa Slab One', Rockwell, 'Roboto Slab', Georgia, serif" font-size="41" fill="#E9D3A0" letter-spacing="15"><textPath href="#o80-top" startOffset="50%" text-anchor="middle">OFF&#8201;80</textPath></text>
   <text font-family="'Alfa Slab One', Rockwell, 'Roboto Slab', Georgia, serif" font-size="37" fill="#E9D3A0" letter-spacing="16"><textPath href="#o80-bot" startOffset="50%" text-anchor="middle">ELECTRIC</textPath></text>
 
   <!-- Side tabs -->

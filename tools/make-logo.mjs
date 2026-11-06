@@ -1,6 +1,7 @@
 // Draws the round badge logo as SVG: night sky, lightning bolt striking a snowy peak, pines,
 // rust rings and slab lettering. Writes one file per name to assets/.
 // Usage: node tools/make-logo.mjs
+// Lettering must sit inside the band between the rings (radius 139.5 to 187). Check with a render after changing sizes.
 import { writeFileSync } from 'node:fs';
 
 const C = {
@@ -25,7 +26,7 @@ const pine = (x, base, h, fill) => {
   return `<path d="${d}" fill="${fill}"/>`;
 };
 
-export function badge({ top = 'NORTHERN SPARK', bottom = 'ELECTRIC', left = 'LICENSED', right = 'INSURED', id = 'b', topSpacing = 3, topSize = 37 } = {}) {
+export function badge({ top = 'NORTHERN SPARK', bottom = 'ELECTRIC', left = 'LICENSED', right = 'INSURED', id = 'b', topSpacing = 3, topSize = 37, topR = 148.5 } = {}) {
   const cx = 200, cy = 200;
   const stars = Array.from({ length: 46 }, () => {
     const x = 75 + rnd() * 250, y = 80 + rnd() * 110, r = rnd() < 0.15 ? 1.4 : 0.7;
@@ -40,14 +41,14 @@ export function badge({ top = 'NORTHERN SPARK', bottom = 'ELECTRIC', left = 'LIC
   const frontLeft = [[78, 335, 92], [96, 340, 70], [112, 338, 104], [130, 342, 66], [146, 345, 82]].map(([x, b, h]) => pine(x, b, h, C.pine)).join('');
   const frontRight = [[258, 345, 70], [274, 342, 96], [292, 340, 78], [308, 338, 110], [326, 336, 84]].map(([x, b, h]) => pine(x, b, h, C.pine)).join('');
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="${top} ${bottom}">
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="${top.replace(/&#8201;/g, " ")} ${bottom}">
   <defs>
     <radialGradient id="${id}-sky" cx="40%" cy="30%" r="80%"><stop offset="0" stop-color="${C.sky1}"/><stop offset="1" stop-color="${C.sky2}"/></radialGradient>
     <radialGradient id="${id}-moon" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#FFF1C4" stop-opacity=".9"/><stop offset=".25" stop-color="#F3D98E" stop-opacity=".45"/><stop offset="1" stop-color="#F3D98E" stop-opacity="0"/></radialGradient>
     <radialGradient id="${id}-flash" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
     <linearGradient id="${id}-snow" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${C.snow}"/><stop offset=".55" stop-color="#C9D7DD"/><stop offset="1" stop-color="${C.rock}"/></linearGradient>
     <clipPath id="${id}-scene"><circle cx="${cx}" cy="${cy}" r="131"/></clipPath>
-    <path id="${id}-top" d="M${cx - 154},${cy} A154,154 0 0 1 ${cx + 154},${cy}"/>
+    <path id="${id}-top" d="M${cx - topR},${cy} A${topR},${topR} 0 0 1 ${cx + topR},${cy}"/>
     <path id="${id}-bot" d="M${cx - 178},${cy} A178,178 0 0 0 ${cx + 178},${cy}"/>
   </defs>
 
@@ -103,8 +104,8 @@ export function badge({ top = 'NORTHERN SPARK', bottom = 'ELECTRIC', left = 'LIC
 }
 
 const variants = [
-  { file: 'assets/logo-northern-spark.svg', top: 'NORTHERN SPARK', bottom: 'ELECTRIC', id: 'ns' },
-  { file: 'assets/logo-off80.svg', top: 'OFF 80', bottom: 'ELECTRIC', id: 'o80', topSpacing: 11, topSize: 46 },
+  { file: 'assets/logo-northern-spark.svg', top: 'NORTHERN SPARK', bottom: 'ELECTRIC', id: 'ns', topSpacing: 1.5 },
+  { file: 'assets/logo-off80.svg', top: 'OFF&#8201;80', bottom: 'ELECTRIC', id: 'o80', topSpacing: 15, topSize: 41, topR: 147 },
 ];
 for (const v of variants) { seed = 11; writeFileSync(v.file, badge(v)); }
 console.log('Wrote', variants.map((v) => v.file).join(', '));

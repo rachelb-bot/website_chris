@@ -158,6 +158,7 @@ const MAP = { latMax: 39.31, lngMin: -121.56, k: 990, cos: 0.777 };
 const mxy = ([lat, lng]) => [(lng - MAP.lngMin) * MAP.cos * MAP.k, (MAP.latMax - lat) * MAP.k];
 const mpath = (pts) => 'M' + pts.map((p) => mxy(p).map((n) => n.toFixed(1)).join(',')).join(' L');
 const ROADS = {
+  // (Foresthill Road and Hwy 49 south to Cool are drawn inline in areaMap)
   i80: [[38.58, -121.50], [38.62, -121.42], [38.66, -121.36], [38.70, -121.31], [38.745, -121.27], [38.79, -121.236], [38.82, -121.195], [38.85, -121.17], [38.873, -121.13], [38.90, -121.07], [38.95, -121.04], [38.985, -121.012], [39.0, -120.99], [39.06, -120.97], [39.10, -120.95], [39.2, -120.88]],
   h49: [[38.90, -121.07], [38.97, -121.068], [39.04, -121.066], [39.13, -121.07], [39.20, -121.064], [39.219, -121.061], [39.245, -121.035], [39.262, -121.016], [39.30, -120.99]],
   us50: [[38.58, -121.50], [38.57, -121.40], [38.59, -121.30], [38.63, -121.22], [38.65, -121.17], [38.665, -121.10], [38.68, -121.05], [38.70, -120.88]],
@@ -165,14 +166,16 @@ const ROADS = {
 };
 const LAKE = [[38.707, -121.157], [38.73, -121.15], [38.76, -121.123], [38.79, -121.103], [38.82, -121.083], [38.845, -121.072], [38.835, -121.06], [38.80, -121.082], [38.77, -121.098], [38.74, -121.112], [38.715, -121.138]];
 // Label side for each town, chosen so neighbours in the Rocklin–Auburn cluster don't collide
-const LBL = { sacramento: 'r', 'citrus-heights': 'l', roseville: 'l', rocklin: 'l', loomis: 'l', penryn: 'l', newcastle: 'r', auburn: 'r', 'meadow-vista': 'l', applegate: 'r', colfax: 'r', 'grass-valley': 'l', 'nevada-city': 'r', 'granite-bay': 'b', lincoln: 'l', folsom: 'l', 'el-dorado-hills': 'r', 'lake-of-the-pines': 'l' };
+const LBL = { sacramento: 'r', 'citrus-heights': 'l', roseville: 'l', rocklin: 'l', loomis: 'l', penryn: 'l', newcastle: [8, 23, 'start'], auburn: 'l', 'meadow-vista': 'l', applegate: 'r', colfax: 'r', 'grass-valley': 'l', 'nevada-city': 'r', 'granite-bay': 'b', lincoln: 'l', folsom: 'b', 'el-dorado-hills': 'r', 'lake-of-the-pines': 'l',
+  weimar: 'r', foresthill: 'r', cool: [12, 3, 'start'], 'penn-valley': 'l', carmichael: 'l', 'fair-oaks': 'l', orangevale: 'l', 'rancho-cordova': 'r' };
+const MAP_W = 690; // viewBox width (Foresthill sits furthest east)
 function areaMap({ current = null } = {}) {
   const shield = (lat, lng, label, cls = '') => { const [x, y] = mxy([lat, lng]); const w = label.length > 2 ? 34 : 28; return `<g class="map-shield ${cls}"><rect x="${(x - w / 2).toFixed(1)}" y="${(y - 11).toFixed(1)}" width="${w}" height="22" rx="5"/><text x="${x.toFixed(1)}" y="${(y + 5).toFixed(1)}" text-anchor="middle">${label}</text></g>`; };
-  const ridges = [0, 1, 2, 3, 4].map((i) => { const pts = Array.from({ length: 9 }, (_, j) => [39.3 - j * 0.09, -121.02 + i * 0.03 - Math.sin(j * 1.3 + i) * 0.02]); return `<path class="map-ridge" d="${mpath(pts)}"/>`; }).join('');
+  const ridges = [0, 1, 2, 3, 4, 5, 6, 7].map((i) => { const pts = Array.from({ length: 9 }, (_, j) => [39.3 - j * 0.09, -121.02 + i * 0.03 - Math.sin(j * 1.3 + i) * 0.02]); return `<path class="map-ridge" d="${mpath(pts)}"/>`; }).join('');
   const towns = cities.map((c) => {
     const [x, y] = mxy([c.lat, c.lng]);
     const side = LBL[c.slug] || 'r';
-    const [lx, ly, anchor] = side === 'l' ? [x - 11, y + 6, 'end'] : side === 'b' ? [x, y + 26, 'middle'] : [x + 11, y + 6, 'start'];
+    const [lx, ly, anchor] = Array.isArray(side) ? [x + side[0], y + side[1], side[2]] : side === 'l' ? [x - 11, y + 6, 'end'] : side === 'b' ? [x, y + 26, 'middle'] : [x + 11, y + 6, 'start'];
     const cls = ['map-town', c.home ? 'is-home' : '', current === c.slug ? 'is-current' : ''].join(' ');
     return `<a href="${cityUrl(c)}" class="${cls}" id="map-${c.slug}" aria-label="Electrician in ${esc(c.name)}">
       ${current === c.slug ? `<circle class="map-ring" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="16"/>` : ''}
@@ -181,23 +184,24 @@ function areaMap({ current = null } = {}) {
     </a>`;
   }).join('');
   return `<figure class="area-map">
-  <svg viewBox="-12 -12 564 778" role="img" aria-labelledby="map-t map-d">
+  <svg viewBox="-12 -12 ${MAP_W + 12} 778" role="img" aria-labelledby="map-t map-d">
     <title id="map-t">Map of towns served by ${esc(B.name)}</title>
-    <desc id="map-d">${cities.length} towns along Interstate 80 from Sacramento to Colfax, Highway 49 to Grass Valley and Nevada City, Highway 65 to Lincoln and Highway 50 to Folsom and El Dorado Hills.</desc>
+    <desc id="map-d">${cities.length} towns along Interstate 80 from Sacramento to Colfax, Highway 49 from Cool to Nevada City, Highway 65 to Lincoln, Highway 50 to Folsom and El Dorado Hills, and Foresthill east of Auburn.</desc>
     <defs><linearGradient id="map-hills" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#1F403E" stop-opacity="0"/><stop offset="1" stop-color="#2A504D"/></linearGradient></defs>
-    <rect x="-12" y="-12" width="564" height="778" rx="14" class="map-bg"/>
-    <rect x="180" y="-12" width="372" height="778" fill="url(#map-hills)"/>
+    <rect x="-12" y="-12" width="${MAP_W + 12}" height="778" rx="14" class="map-bg"/>
+    <rect x="180" y="-12" width="${MAP_W - 180}" height="778" fill="url(#map-hills)"/>
     ${ridges}
     <text class="map-region" x="${mxy([38.98, -121.47])[0]}" y="${mxy([38.98, -121.47])[1]}">Sacramento Valley</text>
-    <text class="map-region" x="${mxy([39.2, -121.36])[0]}" y="${mxy([39.2, -121.36])[1]}">Sierra foothills</text>
     <path class="map-lake" d="${mpath(LAKE)} Z"/>
     <text class="map-water" x="${mxy([38.79, -121.05])[0]}" y="${mxy([38.79, -121.05])[1]}">Folsom Lake</text>
     <path class="map-road minor" d="${mpath(ROADS.us50)}"/>
     <path class="map-road minor" d="${mpath(ROADS.h65)}"/>
     <path class="map-road" d="${mpath(ROADS.h49)}"/>
     <path class="map-road major" d="${mpath(ROADS.i80)}"/>
-    ${shield(38.64, -121.40, '80', 'i')}${shield(39.055, -120.973, '80', 'i')}${shield(39.12, -121.07, '49')}${shield(38.578, -121.25, '50')}${shield(38.83, -121.30, '65')}
-    <text class="map-region small" x="${mxy([39.17, -120.905])[0]}" y="${mxy([39.17, -120.905])[1]}" text-anchor="end">to Tahoe</text>
+    ${shield(38.93, -121.05, '80', 'i')}${shield(39.13, -120.935, '80', 'i')}${shield(39.12, -121.07, '49')}${shield(38.565, -121.36, '50')}${shield(38.85, -121.31, '65')}
+    <path class="map-road minor" d="${mpath([[38.90, -121.07], [38.93, -120.98], [38.97, -120.90], [39.0202, -120.818]])}"/>
+    <path class="map-road minor" d="${mpath([[38.90, -121.07], [38.887, -121.0147], [38.86, -120.98]])}"/>
+    <text class="map-region small" x="${mxy([39.2, -120.87])[0]}" y="${mxy([39.2, -120.87])[1]}" text-anchor="end">to Tahoe</text>
     ${towns}
   </svg>
 </figure>`;
@@ -477,6 +481,7 @@ function home() {
 <div class="wrap-wide hero-route">
   ${routeProfile({ animate: true })}
   <p class="route-caption">From the valley floor in Sacramento up into the foothills at Colfax. Tap any town to see its permit office, power company and the jobs we do most there.</p>
+  <div class="also-serving"><span class="also-h">Also serving</span><ul>${offRoute.sort((a, b) => a.name.localeCompare(b.name)).map((c) => `<li><a href="${cityUrl(c)}">${esc(c.name)}</a></li>`).join('')}</ul></div>
 </div></section>
 
 <section class="section intro"><div class="wrap narrow">
@@ -487,7 +492,7 @@ function home() {
     <li>${icon('pin', 'quick-ic')}<span><strong>${cities.length} towns</strong> from Sacramento to Nevada City</span></li>
     <li>${icon('costs', 'quick-ic')}<span><strong>Free estimates</strong> for projects</span></li>
   </ul>
-  <p class="also">Also serving ${offRoute.map((c) => `<a href="${cityUrl(c)}">${esc(c.name)}</a>`).join(', ').replace(/, ([^,]*)$/, ' and $1')}.</p>
+
 </div></section>
 
 <section class="section" aria-labelledby="svc-h"><div class="wrap">
@@ -514,7 +519,7 @@ ${ctaBand('Know what you need? Tell us about the job and get a written price, fr
 <section class="section" aria-labelledby="util-h"><div class="wrap">
   <h2 id="util-h">Three utilities, a dozen permit offices</h2>
   <p class="section-intro">Between Sacramento and Colfax your power comes from one of three utilities. We work with all of them, and knowing which one serves you is half of scheduling a panel upgrade.</p>
-  <div class="util-groups">${[['PG&E', 'pge', 'Most of Placer, Nevada and El Dorado counties, plus Folsom'], ['SMUD', 'smud', 'Sacramento and Citrus Heights'], ['Roseville Electric', 'roseville', 'City of Roseville only']].map(([u, k, note]) => `
+  <div class="util-groups">${[['PG&E', 'pge', 'Most of Placer, Nevada and El Dorado counties, plus Folsom'], ['SMUD', 'smud', 'Sacramento and nearby Sacramento County towns'], ['Roseville Electric', 'roseville', 'City of Roseville only']].map(([u, k, note]) => `
     <div class="util-group util-g-${k}">${icon('tower', 'ug-ic')}<h3>${esc(u)}</h3><p>${esc(note)}</p>
       <ul class="town-chips">${cities.filter((c) => c.utility.startsWith(u.split(' ')[0])).map((c) => `<li><a href="${cityUrl(c)}">${esc(c.name)}</a></li>`).join('')}</ul></div>`).join('')}
   </div>
@@ -1062,14 +1067,14 @@ Sitemap: ${fullUrl('/sitemap.xml')}
   // llms.txt: a plain-language summary for AI assistants (AEO)
   writeFileSync(join(OUT, 'llms.txt'), `# ${B.name}
 
-> ${B.name}${B.formerly ? ` (formerly ${B.formerly})` : ''} is a licensed California C-10 electrical contractor based in ${B.city}, CA ${B.zip} (${B.county}). It serves the I-80 corridor from Sacramento to Colfax, Highway 49 to Grass Valley and Nevada City, plus Lincoln, Granite Bay, Folsom, El Dorado Hills and Lake of the Pines. Phone: ${B.phone}. License: ${B.license}.
+> ${B.name}${B.formerly ? ` (formerly ${B.formerly})` : ''} is a licensed California C-10 electrical contractor based in ${B.city}, CA ${B.zip} (${B.county}). It serves ${cities.length} towns: the I-80 corridor from Sacramento to Colfax, Highway 49 from Cool to Grass Valley and Nevada City, plus ${offRoute.filter((c) => !['grass-valley', 'nevada-city'].includes(c.slug)).map((c) => c.name).sort().join(', ')}. Phone: ${B.phone}. License: ${B.license}.
 
 ## Key facts
 - Most requested services: ${popular.map((s) => s.name).join(', ')}
 - Services: ${services.map((s) => s.name).join('; ')}
 - Hours: ${B.hoursText}
 - Permits pulled and inspections handled on every job that requires them
-- Works with all three local utilities: PG&E, SMUD (Sacramento, Citrus Heights) and Roseville Electric Utility (Roseville)
+- Works with all three local utilities: PG&E, SMUD (Sacramento, Citrus Heights, Carmichael, Fair Oaks, Orangevale, Rancho Cordova) and Roseville Electric Utility (Roseville)
 - Specializes in foothill and rural work: PSPS generator hookups, well pumps, barns and shops, older-home rewiring
 
 ## Services

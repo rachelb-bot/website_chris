@@ -405,7 +405,7 @@ export const guides = [
     q: 'Who do I call when my power goes out?',
     title: 'Power Out? Who To Call: PG&E, SMUD or an Electrician',
     meta: 'If neighbors are out too, call your utility: PG&E, SMUD or Roseville Electric. If only your home or part of it is out, call an electrician. How to tell the difference.',
-    answer: 'If your neighbors are also without power, call your utility: PG&E (1-800-743-5002) in most of Placer, Nevada and El Dorado counties, SMUD (1-888-456-7683) in Sacramento and Citrus Heights, or Roseville Electric Utility in Roseville. If only your home, or only part of your home, is out, check your main breaker and then call an electrician.',
+    answer: 'If your neighbors are also without power, call your utility: PG&E (1-800-743-5002) in most of Placer, Nevada and El Dorado counties, SMUD (1-888-456-7683) in Sacramento and nearby Sacramento County towns, or Roseville Electric Utility in Roseville. If only your home, or only part of your home, is out, check your main breaker and then call an electrician.',
     facts: [
       'Whole street out: call the utility',
       'Only your house out: check the main breaker, then call an electrician',
