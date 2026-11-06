@@ -1,0 +1,380 @@
+// Service pages. Each one gets its own URL at /services/<slug>/
+// `answer` is the direct, quotable answer that leads the page (AEO).
+// `cost` ranges are typical for the region — TODO: owner to confirm/adjust.
+
+export const services = [
+  {
+    slug: 'panel-upgrades',
+    noun: 'panel upgrades',
+    name: 'Electrical panel upgrades',
+    short: 'Panel upgrades',
+    blurb: '100 to 200 amp upgrades, Federal Pacific and Zinsco replacements, solar- and EV-ready service.',
+    title: 'Panel Upgrades in Placer County & Sacramento',
+    meta: 'Panel upgrades from Sacramento to Auburn and Grass Valley. 100A to 200A service, FPE and Zinsco replacement, permits and utility scheduling handled.',
+    answer: 'A panel upgrade replaces your main breaker panel, and usually your service size, so the house can safely carry modern loads like EV chargers, heat pumps and solar. Most straightforward 100-to-200-amp upgrades in Placer and Sacramento counties take one day of work plus a permit inspection, and we coordinate the shut-off and reconnect with PG&E, SMUD or Roseville Electric.',
+    cost: { range: '$3,000–$6,500', note: 'for a typical 200-amp upgrade in the same location. Relocating the service, trenching an underground lateral or meter-main replacement adds cost.' },
+    signs: [
+      'Your panel is a Federal Pacific Stab-Lok, Zinsco or Sylvania-Zinsco',
+      'You still have screw-in fuses',
+      'Breakers trip when two big appliances run together',
+      'You’re adding an EV charger, heat pump, spa or solar',
+      'The panel is warm, buzzing, rusted or shows scorch marks',
+      'Your insurer or home inspector flagged it',
+    ],
+    sections: [
+      { h: 'When a panel upgrade is the right fix', p: [
+        'Plenty of homes from Citrus Heights to Auburn were built with 100-amp service. That was enough for a gas furnace, a range and a few window units. It is not enough for a Level 2 EV charger, a heat pump and an induction range on the same service.',
+        'Before quoting an upgrade we do a load calculation under the California Electrical Code. Sometimes the answer is a smart load-management device or a simple circuit change rather than a new service, and we’ll tell you when that’s the cheaper honest answer.',
+      ]},
+      { h: 'Panels we replace on sight', p: [
+        'Federal Pacific Electric (FPE) Stab-Lok and Zinsco panels have well-documented breaker failures: breakers that don’t trip under overload. Both were common in 1960s–80s tract homes across Sacramento and Placer County. If you have one, replacing it is a safety fix, not a cosmetic one.',
+      ]},
+      { h: 'Who you’ll deal with', p: [
+        'We pull the permit with your city or county, schedule the utility disconnect, do the work, and meet the inspector. In Roseville that means Roseville Electric Utility; in Sacramento and Citrus Heights it’s SMUD; almost everywhere else on our route it’s PG&E. Each has its own release process, and that coordination is usually what decides the timeline.',
+      ]},
+    ],
+    faqs: [
+      { q: 'How long does a panel upgrade take?', a: 'The electrical work is usually one day, with power off for 4–8 hours. Add time before for the permit and utility scheduling. PG&E service upgrades can take several weeks to schedule, SMUD and Roseville Electric are often faster.' },
+      { q: 'Do I need a permit for a panel upgrade in California?', a: 'Yes. Every panel replacement or service change requires an electrical permit and a final inspection from your city or county building department. We pull the permit and meet the inspector.' },
+      { q: 'Is 200 amps enough for an EV charger and solar?', a: 'For most single-family homes, yes. A 200-amp service handles a 40–48 amp EV charger, a heat pump and rooftop solar with room to spare. Large all-electric homes or homes with two EVs and a spa may need load management or a 225–400 amp service.' },
+      { q: 'Should I replace a Federal Pacific or Zinsco panel?', a: 'Yes. Both brands have documented breaker failures where breakers do not trip on overload, which is a fire risk. Replacement is the recommended fix, and many insurers now require it.' },
+    ],
+  },
+  {
+    slug: 'ev-charger-installation',
+    noun: 'EV charger installs',
+    name: 'EV charger installation',
+    short: 'EV chargers',
+    blurb: 'Level 2 chargers for Tesla, Rivian, Ford and every other EV, hardwired or on a 14-50 outlet.',
+    title: 'EV Charger Installation | Roseville, Rocklin, Auburn',
+    meta: 'Level 2 EV charger installs in Roseville, Rocklin, Auburn and Sacramento. Tesla, ChargePoint and more, with load calcs and permits.',
+    answer: 'A Level 2 home EV charger runs on a 240-volt circuit, typically 40 to 60 amps, and adds roughly 25 to 45 miles of range per hour of charging. Installation in the Sacramento–Placer area usually takes half a day when the panel has spare capacity, and requires a permit and inspection.',
+    cost: { range: '$800–$2,500', note: 'for most garage installs with a short run from the panel. Long runs, detached garages, or a needed panel upgrade cost more.' },
+    signs: [
+      'You’re buying or leasing an EV or plug-in hybrid',
+      'You’re charging on a 120V outlet and it can’t keep up',
+      'You want a charger in a detached garage or at the driveway',
+      'You have two EVs and need load sharing',
+    ],
+    sections: [
+      { h: 'Hardwired charger or a 14-50 outlet?', p: [
+        'A hardwired wall connector is our default recommendation: it allows higher charging speeds, has no plug to wear out, and avoids the cheap-receptacle overheating problems that show up on outlet installs. A NEMA 14-50 outlet makes sense if you’ll move the charger or use a mobile cord.',
+      ]},
+      { h: 'When the panel is already full', p: [
+        'If a load calculation shows your service can’t carry a charger, there are options short of a full panel upgrade: a lower-amperage circuit, a load-management device that throttles the charger when the house is busy, or a circuit-sharing setup for two EVs. We’ll price the options side by side.',
+      ]},
+      { h: 'Rebates worth checking', p: [
+        'SMUD (Sacramento, Citrus Heights) and Roseville Electric have both offered EV charger and panel incentives in recent years. PG&E customers should check current programs too. Rebate rules change often, so we confirm what’s live before you buy hardware.',
+      ]},
+    ],
+    faqs: [
+      { q: 'How much does it cost to install an EV charger at home?', a: 'Most Level 2 installs in the Sacramento and Placer County area run $800 to $2,500 for labor, materials and permit, not including the charger itself. A panel upgrade, if needed, is a separate cost.' },
+      { q: 'What size breaker does a Level 2 charger need?', a: 'A charger that draws 48 amps needs a 60-amp circuit; a 32-amp charger needs a 40-amp circuit. The circuit must be rated for 125% of the charger’s continuous load under the electrical code.' },
+      { q: 'Can you install a Tesla Wall Connector?', a: 'Yes. We install Tesla Wall Connectors, ChargePoint, Emporia, Grizzl-E, JuiceBox-style units and most other UL-listed Level 2 chargers, including for Rivian, Ford, Chevy, Hyundai and Kia EVs.' },
+      { q: 'Do I need a permit for an EV charger?', a: 'Yes. A new 240V EV charging circuit requires an electrical permit in every city and county we serve. Most building departments offer expedited permits for EV chargers.' },
+    ],
+  },
+  {
+    slug: 'generator-installation',
+    noun: 'generator hookups',
+    name: 'Generator hookups & standby power',
+    short: 'Generators',
+    blurb: 'Interlock kits and inlets for portable generators, whole-home standby units, and battery backup for PSPS outages.',
+    title: 'Generator Hookups for PSPS Outages | Auburn to Colfax',
+    meta: 'Generator interlocks, inlets and standby generators for PG&E shutoffs in Newcastle, Auburn, Meadow Vista, Colfax and Grass Valley.',
+    answer: 'The safest way to run a portable generator in the foothills is through a code-approved interlock kit and inlet box installed by an electrician, which lets you power selected circuits without back-feeding the utility line. Whole-home standby generators start automatically during PG&E Public Safety Power Shutoffs and need a transfer switch, a permit and a gas or propane supply.',
+    cost: { range: '$900–$2,200', note: 'for an interlock kit and inlet box. Automatic whole-home standby generators typically run $10,000–$20,000 installed, including the unit, transfer switch and gas work.' },
+    signs: [
+      'You lost power during the last PSPS event and ran extension cords',
+      'You’re on a well and lose water when power goes out',
+      'Someone in the house relies on medical equipment',
+      'You own a portable generator but no safe way to connect it',
+    ],
+    sections: [
+      { h: 'Why the foothills plan for outages', p: [
+        'Above Auburn, PG&E’s Public Safety Power Shutoffs are a fact of life in fire season, and winter storms bring down lines through Meadow Vista, Colfax and Grass Valley. On a well, no power also means no water. A properly connected generator turns a multi-day outage into an inconvenience.',
+      ]},
+      { h: 'Interlock and inlet: the practical option', p: [
+        'An interlock is a mechanical slide plate on your panel that makes it physically impossible to have the main breaker and the generator breaker on at the same time. Pair it with an outdoor inlet box and one cord from the generator, and you choose which circuits to run: well pump, fridge, furnace fan, lights.',
+        'Never use a “suicide cord” (a double male plug). It back-feeds the utility line and can electrocute line workers.',
+      ]},
+      { h: 'Standby generators and batteries', p: [
+        'Automatic standby units from Generac, Kohler and Briggs & Stratton start within seconds of an outage. Battery systems like Tesla Powerwall or Enphase pair well with solar and run silently. We handle the electrical side, transfer switches, load calcs and permits, and coordinate with your propane or gas provider.',
+      ]},
+    ],
+    faqs: [
+      { q: 'Is a generator interlock kit legal in California?', a: 'Yes, when it is a listed interlock made for your specific panel and installed under an electrical permit. It is a code-accepted transfer method for portable generators.' },
+      { q: 'What size generator do I need to run a well pump?', a: 'Most 1 to 1.5 HP residential well pumps need a generator of at least 5,000–7,500 running watts to handle the starting surge alongside a fridge and lights. We check your pump’s nameplate before recommending a size.' },
+      { q: 'Can a generator run my whole house during a PSPS?', a: 'A standby generator of about 20–26 kW with an automatic transfer switch can run most homes, including central air. A portable generator through an interlock will power essential circuits but usually not everything at once.' },
+    ],
+  },
+  {
+    slug: 'electrical-repair',
+    noun: 'troubleshooting',
+    name: 'Electrical repair & troubleshooting',
+    short: 'Repairs',
+    blurb: 'Tripping breakers, dead outlets, flickering lights, buzzing switches and partial power loss.',
+    title: 'Electrical Repair in Placer County & Sacramento',
+    meta: 'Breakers that keep tripping, dead outlets, flickering lights and partial outages fixed by a licensed electrician. Placer County and Sacramento.',
+    answer: 'Most household electrical problems, like a breaker that keeps tripping, a dead outlet or flickering lights, trace back to an overloaded circuit, a failed GFCI, or a loose connection at a device or in the panel. A licensed electrician can usually find and fix the cause in a single visit.',
+    cost: { range: '$150–$450', note: 'for most diagnostic visits and single repairs. We quote the repair before starting.' },
+    signs: [
+      'A breaker trips repeatedly, or won’t reset',
+      'Half the house has power and half doesn’t',
+      'Lights dim or flicker when the AC or microwave starts',
+      'An outlet or switch is warm, discolored or buzzing',
+      'GFCI outlets won’t reset',
+    ],
+    sections: [
+      { h: 'How we troubleshoot', p: [
+        'We start at the panel and work outward with a meter, not guesswork. Many “dead outlet” calls turn out to be a tripped GFCI in another room, often the garage, a bathroom, or outside. We’ll check those first so you’re not paying for something simple.',
+      ]},
+      { h: 'Partial power loss is urgent', p: [
+        'If half your house is out and lights elsewhere are unusually bright or dim, you may have a lost neutral, either in your panel or on the utility side. That can damage electronics and appliances. Turn off sensitive equipment and call us or your utility right away.',
+      ]},
+    ],
+    faqs: [
+      { q: 'Why does my breaker keep tripping?', a: 'The most common causes are too many appliances on one circuit, a failing appliance, a ground fault from moisture, or a worn-out breaker. If it trips with nothing plugged in, there is likely a short in the wiring and you should leave it off and call an electrician.' },
+      { q: 'Why do my lights flicker when the AC turns on?', a: 'A brief dim when a large motor starts is normal. Noticeable flicker, or flicker that’s getting worse, can point to a loose connection, an undersized service or a utility-side problem, and is worth having checked.' },
+      { q: 'Is a warm outlet dangerous?', a: 'Yes. An outlet or switch plate that is warm to the touch usually has a loose connection or overloaded device. Stop using it and have it inspected.' },
+    ],
+  },
+  {
+    slug: 'emergency-electrician',
+    noun: 'emergency calls',
+    name: 'Emergency electrician',
+    short: 'Emergency calls',
+    blurb: 'Burning smells, sparking, storm damage and outages that are on your side of the meter.',
+    title: 'Emergency Electrician | Placer County & Sacramento',
+    meta: 'Burning smell, sparking outlet, storm damage or half the house out? Licensed emergency electrician for Placer County and Sacramento.',
+    answer: 'Call an emergency electrician if you smell burning plastic, see sparks or scorch marks, or lose power to part of the house while neighbors still have it. If power is out to your whole street, or a utility line is down, call PG&E, SMUD or Roseville Electric first. That’s their equipment.',
+    cost: { range: 'Quoted on the phone', note: 'Emergency and after-hours rates apply. We’ll tell you the trip charge before we head out.' },
+    signs: [
+      'Burning smell from an outlet, switch, panel or fixture',
+      'Visible sparks, smoke or scorch marks',
+      'Power out to part of the house only',
+      'Storm or tree damage to the service mast or meter',
+      'Water has reached the panel or wiring',
+    ],
+    sections: [
+      { h: 'What to do right now', p: [
+        'If you smell burning or see smoke, shut off the breaker for that area, or the main breaker if you’re unsure, and keep away from the panel if it’s hot or wet. If there are flames, leave the house and call 911.',
+        'If a tree has pulled the service drop off the house, stay clear and call your utility. Once they make it safe, we repair the mast, weatherhead and meter base so they can reconnect you.',
+      ]},
+      { h: 'Is it the utility or me?', p: [
+        'The utility owns everything up to and including the meter. You own the meter base, panel and everything after it. If neighbors have power and you don’t, the problem is usually on your side. Check for a tripped main breaker first.',
+      ]},
+    ],
+    faqs: [
+      { q: 'Who do I call when the power goes out?', a: 'If your neighbors are also out, call your utility: PG&E at 1-800-743-5002, SMUD at 1-888-456-7683, or Roseville Electric Utility (Roseville addresses). If only your home or part of your home is out, call an electrician.' },
+      { q: 'Who repairs a service mast pulled off by a tree?', a: 'The homeowner’s electrician repairs the mast, weatherhead and meter base, then the utility reconnects the service drop. Most utilities require the repair to pass an inspection before reconnecting.' },
+    ],
+  },
+  {
+    slug: 'home-rewiring',
+    noun: 'rewiring older homes',
+    name: 'Home rewiring & knob-and-tube replacement',
+    short: 'Rewiring',
+    blurb: 'Knob-and-tube, aluminum branch wiring and ungrounded two-prong circuits in older foothill and Sacramento homes.',
+    title: 'Knob & Tube Replacement | Auburn, Grass Valley, Sacramento',
+    meta: 'Knob-and-tube replacement and rewiring for older homes in Auburn, Grass Valley, Nevada City and East Sacramento. Grounded circuits, minimal patching.',
+    answer: 'Knob-and-tube wiring, common in homes built before about 1940, has no ground wire, wasn’t designed for modern loads, and many insurers won’t cover it. Replacing it means running new grounded circuits through walls and attics, usually room by room, with patching kept to small access holes.',
+    cost: { range: '$8,000–$25,000+', note: 'for a full rewire, depending on home size, access and plaster. Partial rewires of active knob-and-tube circuits cost less.' },
+    signs: [
+      'You see porcelain knobs and tubes in the attic or crawlspace',
+      'Outlets are two-prong only',
+      'Your insurer asked about knob-and-tube or aluminum wiring',
+      'The house was built before 1950 and has never been rewired',
+    ],
+    sections: [
+      { h: 'Where we find it', p: [
+        'Gold Rush–era and early 1900s homes in Old Town Auburn, Grass Valley, Nevada City and Colfax, and 1910s–1940s neighborhoods in East Sacramento, Land Park and Curtis Park, still have active knob-and-tube circuits. Often they’ve been partially updated, with new and old wiring spliced together in the attic.',
+      ]},
+      { h: 'How a rewire works in a lived-in house', p: [
+        'We fish new cable through existing walls from the attic and crawlspace, so most rooms need only small access holes. We work circuit by circuit so you keep power to most of the house during the job, and we can coordinate with your painter or plasterer on patching.',
+      ]},
+      { h: 'Aluminum branch wiring', p: [
+        'Some homes from the mid-1960s to mid-1970s used aluminum branch circuits. The fix is usually not a full rewire: approved AlumiConn or COPALUM connectors at every device and splice address the risk at a fraction of the cost.',
+      ]},
+    ],
+    faqs: [
+      { q: 'Is knob-and-tube wiring dangerous?', a: 'Original, undisturbed knob-and-tube is not automatically dangerous, but it has no ground, its insulation becomes brittle with age, and it can overheat when buried in attic insulation or overloaded. Most insurers require it to be replaced or inspected.' },
+      { q: 'How long does it take to rewire a house?', a: 'A typical 1,200–2,000 sq ft single-story home takes about one to two weeks. Two-story homes and plaster walls take longer.' },
+      { q: 'Can I stay in my home during a rewire?', a: 'Usually yes. We rewire circuit by circuit so most of the house has power each evening.' },
+    ],
+  },
+  {
+    slug: 'lighting-installation',
+    noun: 'lighting',
+    name: 'Lighting installation',
+    short: 'Lighting',
+    blurb: 'Recessed and LED retrofit lighting, ceiling fans, exterior and landscape lighting, dimmers and smart switches.',
+    title: 'Lighting & Ceiling Fan Installation | Roseville & Auburn',
+    meta: 'Recessed lighting, ceiling fans, LED retrofits and landscape lighting installed by a licensed electrician in Placer and Sacramento counties.',
+    answer: 'A licensed electrician can add recessed lighting, ceiling fans, exterior and landscape lighting to most homes without opening up walls, by fishing wire from the attic. In California, new lighting in most rooms must meet Title 24 efficiency rules, which LED fixtures with proper dimmers satisfy.',
+    cost: { range: '$175–$350 per fixture', note: 'for recessed LED lights installed in groups with attic access. Ceiling fans with existing wiring start lower; new circuits cost more.' },
+    signs: [
+      'Rooms rely on lamps because there’s no overhead light',
+      'You want a fan where there’s only a light box',
+      'Your driveway, steps or yard are dark at night',
+      'You want smart switches or dimmers that don’t buzz or flicker',
+    ],
+    sections: [
+      { h: 'Inside the house', p: [
+        'Wafer-style LED recessed lights need no bulky housings, so we can add them under most attics and many second floors. Every ceiling fan goes on a fan-rated box, which isn’t always what’s up there now.',
+      ]},
+      { h: 'Outside', p: [
+        'Path, step, tree and façade lighting for properties from Granite Bay to Loomis horse ranches. Low-voltage landscape systems on timers and photocells, plus line-voltage security lighting for barns, gates and long driveways.',
+        'Foothill properties under dark-sky-minded neighbors do best with shielded, warm-color fixtures that light the ground, not the sky.',
+      ]},
+    ],
+    faqs: [
+      { q: 'Can you add recessed lights without an attic?', a: 'Often, yes. Low-profile wafer LED lights can be fed through small holes between joists. It takes more labor than an attic install, and we’ll check the ceiling before quoting.' },
+      { q: 'Can a ceiling fan replace a light fixture?', a: 'Yes, if the electrical box is rated for fan support. If it isn’t, we replace it with a fan-rated brace box during the install.' },
+    ],
+  },
+  {
+    slug: 'outbuilding-well-pump-wiring',
+    noun: 'barn, shop and well pump wiring',
+    name: 'Barn, shop, ADU & well pump wiring',
+    short: 'Rural & outbuildings',
+    blurb: 'Subpanels for shops and barns, ADU service, well pump circuits and trenching on acreage.',
+    title: 'Barn, Shop & Well Pump Electrician | Placer Foothills',
+    meta: 'Power for barns, shops and ADUs, plus well pump circuits and underground feeders on foothill acreage in Placer and Nevada counties.',
+    answer: 'Powering a barn, shop or ADU usually means a feeder from the main panel to a new subpanel in the outbuilding, run underground in conduit at code-required depth, with its own grounding electrodes. Well pumps need a dedicated 240V circuit, and on acreage the long distances mean wire must be upsized to prevent voltage drop.',
+    cost: { range: '$2,500–$9,000', note: 'for a typical shop or barn subpanel with trenching under 150 feet. Longer runs, rocky ground or a separate meter cost more.' },
+    signs: [
+      'You’re running a shop off an extension cord',
+      'Your barn or arena lighting trips breakers in winter',
+      'You’re building an ADU or converting a garage',
+      'The well pump circuit is old, overloaded or keeps tripping',
+    ],
+    sections: [
+      { h: 'Built for foothill ground', p: [
+        'Between Loomis and Colfax, trenching means granite, oak roots and slopes. We plan runs to avoid the worst of it and size conductors for the actual distance, since a 200-foot run to a shop can need wire two or three sizes larger than the breaker suggests.',
+      ]},
+      { h: 'ADUs and garage conversions', p: [
+        'An ADU can be fed from your existing panel or get its own meter. The right choice depends on your service size, the utility, and whether you’ll rent the unit. We do the load calculation early so it doesn’t stall your building permit.',
+      ]},
+      { h: 'Well pumps and pressure tanks', p: [
+        'We wire submersible and jet pumps, pressure switches and control boxes, and diagnose “no water” calls from the electrical side. We’ll also tie the well circuit into your generator plan.',
+      ]},
+    ],
+    faqs: [
+      { q: 'How deep does electrical conduit need to be buried?', a: 'Under the California Electrical Code, rigid metal conduit can be 6 inches deep, PVC conduit generally 18 inches, and direct-burial cable 24 inches for residential feeders, with shallower allowances in some locations. We confirm with your inspector before trenching.' },
+      { q: 'Does a detached shop need its own ground rod?', a: 'Yes. A separate building fed from a subpanel needs its own grounding electrode system, and the feeder must include an equipment grounding conductor, with neutral and ground kept separate at the subpanel.' },
+      { q: 'Does an ADU need a separate electric meter?', a: 'Not necessarily. Many ADUs are fed from the main house panel. A separate meter is common when the ADU will be rented or when the main service lacks capacity.' },
+    ],
+  },
+  {
+    slug: 'hot-tub-spa-wiring',
+    noun: 'hot tub and spa wiring',
+    name: 'Hot tub, spa & pool wiring',
+    short: 'Hot tubs & pools',
+    blurb: 'GFCI disconnects for spas, pool pump and heater circuits, equipotential bonding.',
+    title: 'Hot Tub & Spa Wiring | Granite Bay, Roseville, Folsom',
+    meta: 'Hot tub and spa hookups with GFCI disconnects, pool pump circuits and bonding. Granite Bay, Roseville, Folsom, Auburn and beyond.',
+    answer: 'Most 240-volt hot tubs need a dedicated 40 to 60 amp circuit and a GFCI-protected disconnect mounted within sight of the spa but at least 5 feet away from it. Plug-and-play 120-volt spas need a dedicated 20-amp GFCI outlet. Both need a permit and inspection.',
+    cost: { range: '$1,200–$3,000', note: 'for a typical 240V spa hookup near the house. Long runs, trenching or a full panel cost more.' },
+    signs: [
+      'You’ve ordered a hot tub or swim spa',
+      'Your spa disconnect is corroded or keeps tripping',
+      'You’re replacing a pool pump with a variable-speed model',
+    ],
+    sections: [
+      { h: 'Plan before the spa arrives', p: [
+        'Check your spa’s spec sheet for amperage, then let us look at the panel. A 50-amp spa on a 100-amp service can push the house past its limit, so it’s much easier to sort out before delivery day.',
+      ]},
+      { h: 'Pools and bonding', p: [
+        'Pools need equipotential bonding of the shell, deck and metal parts, which is inspected before concrete is poured. We also replace pool pumps and controls, and swap single-speed pumps for variable-speed models.',
+      ]},
+    ],
+    faqs: [
+      { q: 'How far from a hot tub does the disconnect need to be?', a: 'At least 5 feet horizontally from the inside wall of the spa, and within sight of it, so someone can shut it off in an emergency without reaching over the water.' },
+      { q: 'Can I plug a hot tub into a regular outlet?', a: 'Only 120V “plug-and-play” spas, and only into a dedicated, GFCI-protected 20-amp outlet. Never use an extension cord.' },
+    ],
+  },
+  {
+    slug: 'solar-battery-electrical',
+    noun: 'solar and battery electrical work',
+    name: 'Solar & battery electrical work',
+    short: 'Solar & batteries',
+    blurb: 'Main panel upgrades for solar, battery backup subpanels, and repairs on existing systems.',
+    title: 'Solar Panel Upgrades & Battery Backup Wiring | Placer',
+    meta: 'Solar-ready main panel upgrades, battery backup subpanels and repairs on existing solar in Roseville, Rocklin, Lincoln and Sacramento.',
+    answer: 'Many solar installs in the Sacramento region need a main panel upgrade first, because the panel’s busbar can’t accept enough back-fed solar breaker. Adding a home battery usually means moving essential circuits to a backup-loads subpanel. An electrician can do this prep so your solar company can install on schedule.',
+    cost: { range: '$3,000–$7,500', note: 'for a solar-ready main panel upgrade. Backup-loads subpanels for batteries typically add $1,200–$3,000.' },
+    signs: [
+      'Your solar quote says “main panel upgrade required”',
+      'You want backup power during outages, not just bill savings',
+      'An older system has a failed inverter or disconnect',
+    ],
+    sections: [
+      { h: 'We’re the electrician, not a solar salesperson', p: [
+        'We don’t sell panels. We do the electrical work solar and battery installers often subcontract out or leave for you to arrange: service upgrades, subpanels, trenching to ground mounts, and fixing older systems whose original installer is gone.',
+      ]},
+      { h: 'Three utilities, three rulebooks', p: [
+        'PG&E, SMUD and Roseville Electric each have their own interconnection process and rates for exported solar. We build to whichever applies to your address.',
+      ]},
+    ],
+    faqs: [
+      { q: 'Why do I need a panel upgrade for solar?', a: 'The electrical code limits how much breaker current can feed a panel’s busbar. Many 100–125 amp panels can’t take a large enough solar breaker, so a 200-amp panel, often with a reduced 175-amp main, is installed instead.' },
+      { q: 'Will solar keep my power on during an outage?', a: 'Not by itself. Grid-tied solar shuts off during outages for line-worker safety. You need a battery or a backup-capable inverter with a transfer switch to keep power on.' },
+    ],
+  },
+  {
+    slug: 'electrical-inspection',
+    noun: 'safety inspections',
+    name: 'Electrical safety inspections',
+    short: 'Inspections',
+    blurb: 'Pre-purchase, insurance and safety inspections with a written report and photos.',
+    title: 'Home Electrical Inspection | Placer County & Sacramento',
+    meta: 'Electrical safety inspections for buyers, sellers and insurers, with a written report, photos and repair pricing. Placer and Sacramento.',
+    answer: 'An electrical safety inspection is a licensed electrician’s walk-through of your panel, service, wiring, grounding and devices, ending in a written report of hazards with photos and repair pricing. It goes deeper than a general home inspection, which often just flags “have an electrician evaluate.”',
+    cost: { range: '$195–$395', note: 'for most single-family homes, including a written report.' },
+    signs: [
+      'Your home inspector wrote “recommend evaluation by a licensed electrician”',
+      'Your insurer asked about panel brand or knob-and-tube',
+      'You’ve bought an older home and want a baseline',
+    ],
+    sections: [
+      { h: 'What we check', p: [
+        'Panel brand and condition, breaker sizing against wire size, service grounding and bonding, GFCI and AFCI protection, smoke and CO alarm placement, visible attic and crawlspace wiring, outdoor and garage circuits, and any DIY work that needs correcting.',
+      ]},
+      { h: 'Useful in escrow', p: [
+        'Our report separates safety hazards from nice-to-have updates and prices each item, which gives buyers and sellers something concrete to negotiate with.',
+      ]},
+    ],
+    faqs: [
+      { q: 'How long does an electrical inspection take?', a: 'About 1 to 2 hours for most homes, with the written report delivered within one business day.' },
+      { q: 'Is an electrical inspection different from a home inspection?', a: 'Yes. A general home inspector looks at the whole house and isn’t licensed to open and evaluate electrical systems in depth. An electrician’s inspection goes into the panel and circuits and prices repairs.' },
+    ],
+  },
+  {
+    slug: 'commercial-electrical',
+    noun: 'light commercial work',
+    name: 'Light commercial electrical',
+    short: 'Commercial',
+    blurb: 'Tenant improvements, retail and office lighting, shops, wineries and small farms.',
+    title: 'Commercial Electrician | Auburn, Roseville & Rocklin',
+    meta: 'Light commercial electrical for shops, offices, restaurants, wineries and farms. Tenant improvements, lighting and three-phase circuits.',
+    answer: 'Light commercial electrical work covers tenant improvements, lighting retrofits, new circuits for equipment and three-phase motor connections in small buildings. It’s permitted and inspected like residential work, but has to meet commercial code requirements and is often scheduled around business hours.',
+    cost: { range: 'Quoted per project', note: 'We walk the site and send a written, itemized proposal.' },
+    signs: [
+      'You’re fitting out a new lease',
+      'Your shop needs circuits for new equipment',
+      'Your lighting is old fluorescent and expensive to run',
+      'Your tasting room, packing shed or farm stand needs power',
+    ],
+    sections: [
+      { h: 'Small jobs welcome', p: [
+        'Most of our commercial customers are small: Old Town Auburn storefronts, Rocklin and Roseville offices, auto and fabrication shops, foothill wineries and farm operations. We can work before opening or after close so you don’t lose a business day.',
+      ]},
+    ],
+    faqs: [
+      { q: 'Do you work on three-phase power?', a: 'Yes. We install and repair 208V and 480V three-phase circuits for shop equipment, compressors and HVAC in small commercial buildings.' },
+    ],
+  },
+];
+
+export const serviceBySlug = Object.fromEntries(services.map((s) => [s.slug, s]));

@@ -1,0 +1,12 @@
+// Site-wide FAQ. Short, direct answers written to be quoted by search
+// engines and AI assistants (AEO).
+export const generalFaqs = [
+  { q: 'What areas does Off 80 Electric serve?', a: 'We serve the I-80 corridor from Sacramento to Colfax: Sacramento, Citrus Heights, Roseville, Rocklin, Granite Bay, Lincoln, Loomis, Penryn, Newcastle, Auburn, Meadow Vista, Applegate and Colfax. We also serve Highway 49 to Grass Valley and Nevada City, plus Lake of the Pines, Folsom and El Dorado Hills.' },
+  { q: 'Is Off 80 Electric licensed and insured?', a: 'Yes. We are a California C-10 licensed electrical contractor with general liability and workers’ compensation coverage. You can verify any contractor’s license on the CSLB website at cslb.ca.gov.' },
+  { q: 'Do you pull permits?', a: 'Yes. We pull the electrical permit for every job that requires one and meet the inspector, whether your property is in a city or in unincorporated Placer, Nevada, Sacramento or El Dorado County.' },
+  { q: 'How much does an electrician charge in Placer County?', a: 'Most service calls and small repairs in Placer and Sacramento counties fall between $150 and $450. Larger projects like panel upgrades ($3,000–$6,500) and EV charger installs ($800–$2,500) are quoted in writing after a site visit.' },
+  { q: 'Do you offer free estimates?', a: 'Yes. Estimates for projects like panel upgrades, EV chargers, generators, rewiring and outbuilding power are free. Troubleshooting visits have a diagnostic fee, because finding the fault is the work.' },
+  { q: 'Which electric utility serves my address?', a: 'Sacramento and Citrus Heights are served by SMUD. Roseville is served by Roseville Electric Utility. Rocklin, Lincoln, Loomis, Granite Bay, Newcastle, Auburn, Colfax, Grass Valley, Nevada City, Folsom and El Dorado Hills are served by PG&E.' },
+  { q: 'What should I do during a PG&E Public Safety Power Shutoff?', a: 'Run a portable generator only outdoors and only through a permitted interlock kit or transfer switch, never with a back-feed cord. Keep it at least 20 feet from doors and windows. If you are on a well, include the well pump circuit in your generator plan.' },
+  { q: 'Can you work on older foothill homes and Gold Rush–era buildings?', a: 'Yes. We regularly rewire and update older homes in Auburn, Grass Valley, Nevada City, Colfax and Newcastle, including knob-and-tube replacement, fuse panel upgrades and grounding, with minimal damage to original plaster and trim.' },
+];
