@@ -450,3 +450,20 @@ svg { --ic-line: var(--night); --ic-a: var(--tan); --ic-b: var(--rust); --ic-s: 
 .band-psps .medal { height: 120px; }
 @media (max-width: 760px) { .hero-grid .medal { height: 96px; } }
 @media (max-width: 860px) { .svc-layout .svc-aside { order: -1; } }
+
+/* Most requested: three larger tiles */
+.featured { list-style: none; margin: 0 0 1rem; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; }
+.featured a { display: flex; flex-direction: column; gap: 0.6rem; height: 100%; padding: 1.75rem 1.5rem 1.5rem; background: var(--night); color: var(--on-night); text-decoration: none; border-bottom: 6px solid var(--rust); }
+.featured a:hover, .featured a:focus-visible { background: var(--night-2); color: var(--on-night); }
+.feat-medal { width: 92px; height: 92px; border-radius: 50%; background: var(--night-2); box-shadow: 0 0 0 3px var(--night), 0 0 0 6px var(--rust); display: grid; place-items: center; margin-bottom: 0.5rem; }
+.featured a:hover .feat-medal { background: var(--night); }
+.feat-ic { width: 62%; height: 62%; --ic-line: var(--night-deep); }
+.feat-name { font: 400 1.5rem/1.15 var(--f-slab); color: var(--tan); }
+.feat-blurb { color: var(--on-night-soft); font-size: 1rem; line-height: 1.55; flex: 1; }
+.feat-cost { font-size: 1rem; color: var(--on-night-soft); }
+.feat-cost strong { display: block; font: 400 1.35rem var(--f-slab); color: var(--on-night); }
+.feat-go { font-weight: 700; color: var(--tan); text-decoration: underline; text-underline-offset: 0.2em; }
+.spaced-h { margin-top: 3rem; }
+.popular-tag { display: inline-flex; align-items: center; gap: 0.5rem; margin: 0 0 1rem; padding: 0.35rem 0.85rem 0.35rem 0.5rem; border-radius: 999px; background: var(--night-2); color: var(--tan); font-weight: 700; font-size: 0.95rem; }
+.popular-tag .tick { width: 20px; height: 20px; margin: 0; }
+@media (max-width: 900px) { .featured { grid-template-columns: 1fr; } .featured a { display: grid; grid-template-columns: 72px 1fr; column-gap: 1rem; } .feat-medal { width: 64px; height: 64px; grid-row: span 4; } }

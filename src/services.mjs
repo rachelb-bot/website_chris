@@ -5,6 +5,7 @@
 export const services = [
   {
     slug: 'panel-upgrades',
+    popular: true,
     time: 'One day of work, plus utility scheduling',
     permit: 'Yes, always',
     noun: 'panel upgrades',
@@ -48,6 +49,7 @@ export const services = [
   },
   {
     slug: 'ev-charger-installation',
+    popular: true,
     time: 'Half a day for most garages',
     permit: 'Yes',
     noun: 'EV charger installs',
@@ -88,6 +90,7 @@ export const services = [
   },
   {
     slug: 'generator-installation',
+    popular: true,
     time: 'One day for an interlock; 2–3 days for a standby unit',
     permit: 'Yes',
     noun: 'generator hookups',

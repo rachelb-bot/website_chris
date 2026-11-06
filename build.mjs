@@ -324,6 +324,15 @@ const estimateBlock = ({ city = null, service = null } = {}) => `
   .replace(city ? `<option>${esc(city.name)}</option>` : '§', city ? `<option selected>${esc(city.name)}</option>` : '§')
   .replace(service ? `<option>${esc(service.short)}</option>` : '§', service ? `<option selected>${esc(service.short)}</option>` : '§');
 
+const popular = services.filter((s) => s.popular);
+const others = services.filter((s) => !s.popular);
+// Chris's three most requested jobs get a larger feature row
+const featured = () => `<ul class="featured">${popular.map((s) => `<li><a href="${svcUrl(s)}">
+  <span class="feat-medal" aria-hidden="true">${icon(s.slug, 'feat-ic')}</span>
+  <span class="feat-name">${esc(s.name)}</span>
+  <span class="feat-blurb">${esc(firstSentence(s.answer))}</span>
+  <span class="feat-cost">Typical cost <strong>${esc(s.cost.range)}</strong></span>
+  <span class="feat-go">${esc(s.short.replace(/s$/, ''))} details</span></a></li>`).join('')}</ul>`;
 const serviceIndex = (list = services) => `<ul class="svc-index">${list.map((s) => `
   <li><a href="${svcUrl(s)}">${icon(s.slug, 'svc-ic')}<span class="svc-text"><span class="svc-name">${esc(s.name)}</span><span class="svc-blurb">${esc(s.blurb)}</span><span class="svc-cost">Typical cost: ${esc(s.cost.range)}</span></span></a></li>`).join('')}
 </ul>`;
@@ -363,7 +372,7 @@ function home() {
 </div></section>
 
 <section class="section intro"><div class="wrap narrow">
-  <p class="lead">${esc(B.name)} is a licensed C-10 electrical contractor based in ${esc(B.city)}, California. We do residential, rural and light commercial electrical work along the I-80 corridor, including panel upgrades, EV chargers, generator hookups for PG&amp;E shutoffs, rewiring older homes, and power for barns, shops and ADUs. Every job is permitted and inspected.</p>
+  <p class="lead">${esc(B.name)} is a licensed C-10 electrical contractor based in ${esc(B.city)}, California. We do residential, rural and light commercial electrical work along the I-80 corridor, and our most requested jobs are panel upgrades, EV charger installs and generator hookups for PG&amp;E shutoffs. We also rewire older homes and power barns, shops and ADUs. Every job is permitted and inspected.</p>
   <ul class="quick">
     <li>${icon('permit', 'quick-ic')}<span><strong>Licensed C-10</strong> #${esc(B.licenseNumber)}</span></li>
     <li>${icon('check', 'quick-ic')}<span><strong>Permits handled</strong> on every job</span></li>
@@ -374,8 +383,10 @@ function home() {
 </div></section>
 
 <section class="section" aria-labelledby="svc-h"><div class="wrap">
-  <div class="section-head"><h2 id="svc-h">What we do</h2><a class="more" href="/services/">All services</a></div>
-  ${serviceIndex()}
+  <div class="section-head"><h2 id="svc-h">Most requested</h2><a class="more" href="/services/">All services</a></div>
+  ${featured()}
+  <h3 class="also-h">Everything else we do</h3>
+  ${serviceIndex(others)}
 </div></section>
 
 <section class="section band-psps" aria-labelledby="psps-h"><div class="wrap psps-grid">
@@ -428,7 +439,12 @@ function servicesIndex() {
   <h1>Electrical services</h1>
   <p class="hero-answer">Residential, rural and light commercial electrical work across Placer, Sacramento, Nevada and El Dorado counties. Every job is done by a licensed C-10 contractor, with permits and inspections handled for you.</p>
 </div></section>
-<section class="section"><div class="wrap">${serviceIndex()}</div></section>
+<section class="section"><div class="wrap">
+  <h2>Most requested</h2>
+  ${featured()}
+  <h2 class="spaced-h">All other services</h2>
+  ${serviceIndex(others)}
+</div></section>
 <section class="section"><div class="wrap"><h2>How a job goes</h2>${stepsBlock}</div></section>
 ${estimateBlock()}`;
   write('/services/', layout({
@@ -447,6 +463,7 @@ function servicePage(s) {
   const body = `
 <section class="hero hero-inner"><div class="wrap">
   <div class="hero-grid"><div>
+  ${s.popular ? `<p class="popular-tag">${icon('check', 'tick')}One of our three most requested services</p>` : ''}
   <h1>${esc(s.name)}</h1>
   <p class="hero-answer">${esc(s.answer)}</p>
   <div class="hero-actions"><a class="btn btn-call" href="${telHref}">Call ${esc(B.phone)}</a><a class="btn btn-ghost" href="#estimate">Get a quote</a></div>
@@ -891,6 +908,7 @@ Sitemap: ${fullUrl('/sitemap.xml')}
 > ${B.name}${B.formerly ? ` (formerly ${B.formerly})` : ''} is a licensed California C-10 electrical contractor based in ${B.city}, CA ${B.zip} (${B.county}). It serves the I-80 corridor from Sacramento to Colfax, Highway 49 to Grass Valley and Nevada City, plus Lincoln, Granite Bay, Folsom, El Dorado Hills and Lake of the Pines. Phone: ${B.phone}. License: ${B.license}.
 
 ## Key facts
+- Most requested services: ${popular.map((s) => s.name).join(', ')}
 - Services: ${services.map((s) => s.name).join('; ')}
 - Hours: ${B.hoursText}
 - Permits pulled and inspections handled on every job that requires them
