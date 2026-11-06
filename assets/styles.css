@@ -563,3 +563,10 @@ svg { --ic-line: var(--night); --ic-a: var(--tan); --ic-b: var(--rust); --ic-s: 
 .spam-box p { margin: 0; }
 .spam-ic { width: 48px; height: 48px; }
 .next-steps { margin-bottom: 2rem; }
+.footer-badge { width: 150px; height: 150px; }
+.about-badge { float: right; width: 220px; margin: 0 0 1rem 2rem; text-align: center; }
+.about-badge img { width: 220px; height: 220px; display: block; }
+.about-badge figcaption { font-size: 0.9rem; color: var(--ink-soft); margin-top: 0.5rem; }
+@media (max-width: 600px) { .about-badge { float: none; margin: 0 auto 1.5rem; } }
+.logo-badge { width: 58px; height: 58px; flex: none; display: block; }
+@media (max-width: 760px) { .logo-badge { width: 50px; height: 50px; } }

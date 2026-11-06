@@ -51,7 +51,7 @@ const businessSchema = () => ({
   telephone: B.phoneE164,
   email: B.email,
   image: fullUrl('/assets/og.png'),
-  logo: fullUrl('/assets/logo.png'),
+  logo: fullUrl('/assets/logo-off80.png'),
   priceRange: '$$',
   founder: { '@type': 'Person', name: B.owner, jobTitle: 'Owner and licensed electrician' },
   address: {
@@ -185,7 +185,7 @@ const badge = (cls = 'logo-mark', ring = false) => `<svg class="${cls}" viewBox=
   </g>
 </svg>`;
 const logo = `<a class="logo" href="/" aria-label="${esc(B.name)} home">
-  ${badge()}
+  <img class="logo-badge" src="/assets/logo-off80-300.png" width="58" height="58" alt="">
   <span class="logo-word"><span class="logo-off">Off 80</span><span class="logo-elec">Electric</span></span>
 </a>`;
 
@@ -269,7 +269,7 @@ function footer() {
   return `<footer class="site-footer"><div class="wrap">
   <div class="footer-grid">
     <div class="footer-brand">
-      ${badge('footer-badge', true)}
+      <img class="footer-badge" src="/assets/logo-off80-300.png" width="150" height="150" alt="${esc(B.name)} badge">
       <p>Licensed electrician based in ${esc(B.city)}, ${B.region} ${B.zip}. Serving the I-80 corridor from Sacramento to Colfax, and Highway 49 to Grass Valley and Nevada City.</p>
       <p><a class="footer-phone" href="${telHref}">${esc(B.phone)}</a><br><a href="mailto:${B.email}">${esc(B.email)}</a></p>
       <p class="footer-small">${esc(B.license)}${B.formerly ? `<br>Formerly ${esc(B.formerly)}` : ''}</p>
@@ -690,6 +690,7 @@ function about() {
   <p class="hero-answer">${esc(B.name)} is a locally owned electrical contractor based in ${esc(B.city)}, California, run by ${esc(B.owner)}. We work along the I-80 corridor from Sacramento to Colfax, and up Highway 49 to Grass Valley and Nevada City.</p>
 </div></section>
 <section class="section"><div class="wrap narrow prose">
+  <figure class="about-badge"><img src="/assets/logo-off80-300.png" width="220" height="220" alt="${esc(B.name)} badge: a lightning bolt striking a snowy Sierra peak above the pines"><figcaption>The new badge keeps the Northern Spark mountain, bolt and colors.</figcaption></figure>
   <h2>Why “Off 80”</h2>
   <p>Almost every town we work in sits just off Interstate 80. Sacramento, Roseville, Rocklin, Loomis, Penryn, Newcastle, Auburn, Meadow Vista, Applegate and Colfax are all a few minutes from an I-80 exit, and Grass Valley and Nevada City are a short run up Highway 49 from Auburn. Our shop in Newcastle sits right in the middle of that climb, so the name tells you where we go.</p>
   ${B.formerly ? `<p>If you know our truck, you may know us as ${esc(B.formerly)}. Same electrician, same phone number, with a name that says where we work.</p>` : ''}

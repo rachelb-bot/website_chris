@@ -33,7 +33,7 @@ const shell = ({ preheader, body, footer }) => `<!doctype html>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:#ffffff;border-radius:12px;overflow:hidden;">
   <tr><td style="background:${C.night};padding:22px 28px;border-bottom:5px solid ${C.rust};">
     <table role="presentation" cellpadding="0" cellspacing="0"><tr>
-      <td style="padding-right:12px;"><img src="${site}/assets/apple-touch-icon.png" width="44" height="44" alt="" style="display:block;border-radius:22px;"></td>
+      <td style="padding-right:12px;"><img src="${site}/assets/logo-off80-300.png" width="56" height="56" alt="" style="display:block;"></td>
       <td style="font:700 22px/1.1 Georgia,'Rockwell',serif;color:${C.tan};">${esc(B.name)}<br><span style="font:400 13px/1.6 Arial,sans-serif;color:#AFBDB6;">Licensed electrician, Newcastle, CA</span></td>
     </tr></table>
   </td></tr>

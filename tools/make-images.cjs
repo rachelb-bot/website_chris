@@ -6,7 +6,7 @@ const out = path.join(__dirname, '..', 'assets');
 const fonts = `<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Archivo:wdth,wght@75..125,400..900&display=swap" rel="stylesheet">`;
 const site = fs.readFileSync(path.join(__dirname, '..', 'dist', 'index.html'), 'utf8');
 const small = site.match(/<svg class="logo-mark"[\s\S]*?<\/svg>/)[0];
-const big = site.match(/<svg class="footer-badge"[\s\S]*?<\/svg>/)[0];
+const big = small;
 const mark = (s) => (s >= 180 ? big : small).replace(/class="[^"]*"/, `width="${s}" height="${s}"`);
 (async () => {
   const b = await chromium.launch();
