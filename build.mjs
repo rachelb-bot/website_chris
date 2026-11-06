@@ -473,17 +473,15 @@ const guideList = (list) => `<ul class="q-list">${list.map((g) => `<li><a href="
 function home() {
   const faqs = generalFaqs;
   const body = `
-<section class="hero hero-home"><div class="wrap hero-top">
-  <div class="hero-main">
-  <h1><span class="h1-big">Electrical work,<br> anywhere off&nbsp;80.</span>
-  <span class="h1-sub">Licensed electrician in Newcastle, CA, serving Sacramento to Colfax, Highway 49 to Grass Valley, and the towns around them.</span></h1>
+<section class="hero hero-home"><div class="wrap">
+  <h1><span class="h1-big">Electrical work, anywhere off&nbsp;80.</span>
+  <span class="h1-sub">Licensed electrician in Newcastle, CA, serving Sacramento to Colfax and Highway 49 to Grass Valley.</span></h1>
   ${heroActions(true)}
-  </div>
-  <div class="also-serving"><h2 class="also-h">Also serving</h2><ul>${[...offRoute].sort((a, b) => a.name.localeCompare(b.name)).map((c) => `<li><a href="${cityUrl(c)}">${esc(c.name)}</a></li>`).join('')}</ul><a class="also-all" href="/service-areas/">See all ${cities.length} towns on the map</a></div>
 </div>
 <div class="wrap-wide hero-route">
   ${routeProfile({ animate: true })}
   <p class="route-caption">From the valley floor in Sacramento up into the foothills at Colfax. Tap any town to see its permit office, power company and the jobs we do most there.</p>
+  <div class="also-serving"><span class="also-h">Also serving</span><ul>${offRoute.sort((a, b) => a.name.localeCompare(b.name)).map((c) => `<li><a href="${cityUrl(c)}">${esc(c.name)}</a></li>`).join('')}</ul></div>
 </div></section>
 
 <section class="section intro"><div class="wrap narrow">

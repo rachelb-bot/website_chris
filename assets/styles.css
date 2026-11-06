@@ -761,26 +761,3 @@ svg { --ic-line: var(--night); --ic-a: var(--tan); --ic-b: var(--rust); --ic-s: 
 .route-caption, .also-serving { position: relative; z-index: 1; }
 /* Focus ring: rust on light grounds, tan on the dark night bands (rust is under 3:1 there) */
 .hero :focus-visible, .estimate :focus-visible, .site-footer :focus-visible, .topbar :focus-visible, .featured :focus-visible, .area-map :focus-visible { outline-color: var(--tan); }
-
-/* Hero: the towns off the main route sit beside the headline, on the first screen */
-.hero-top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 360px); gap: clamp(2rem, 4vw, 4rem); align-items: end; }
-.hero-top .also-serving { display: block; padding: 1.25rem 1.25rem 1.1rem; margin: 0; background: rgba(15, 36, 35, 0.55); border: 1px solid var(--night-line); border-radius: 12px; }
-.hero-top .also-h { display: block; font: 400 1.25rem/1.2 var(--f-slab); color: var(--tan); margin: 0 0 0.8rem; }
-.hero-top .also-serving ul { gap: 0.45rem; }
-.hero-top .also-serving a { padding: 0.35rem 0.75rem; font-size: 0.92rem; }
-.also-all { display: inline-block; margin-top: 0.9rem; font-weight: 700; font-size: 0.95rem; color: var(--tan) !important; }
-.hero-home .route-caption { padding-bottom: 2.5rem; }
-@media (max-width: 1080px) {
-  .hero-top { grid-template-columns: 1fr; align-items: start; }
-  .hero-top .also-serving { max-width: 640px; }
-}
-@media (max-width: 760px) {
-  .hero-top { gap: 1.75rem; }
-  .hero-top .also-serving { padding: 1rem; }
-  .hero-top .also-serving a { padding: 0.45rem 0.8rem; font-size: 0.95rem; }
-}
-@media (min-width: 1081px) {
-  .hero-top .h1-big { font-size: clamp(3.4rem, 1.2rem + 3.9vw, 4.5rem); max-width: none; white-space: nowrap; }
-
-}
-.hero-top .also-serving a.also-all { display: inline-block; border: 0; background: none; padding: 0.3rem 0; font-size: 0.95rem; text-decoration: underline; text-underline-offset: 0.2em; }
