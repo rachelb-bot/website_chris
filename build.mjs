@@ -8,11 +8,16 @@ import { cities, cityUrl } from './src/cities.mjs';
 import { generalFaqs } from './src/faqs.mjs';
 import { guides, guideTopics, guideUrl, guideBySlug } from './src/guides.mjs';
 import { glossary } from './src/glossary.mjs';
+import { icon, iconSprite } from './src/icons.mjs';
 
 const OUT = 'dist';
 const TODAY = new Date().toISOString().slice(0, 10);
 const MONTH = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 const firstSentence = (t) => { const parts = t.match(/[^.!?]+[.!?]+(\s|$)/g) || [t]; return (parts[0].length < 60 && parts[1] ? parts[0] + parts[1] : parts[0]).trim(); };
+const slugify = (t) => t.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const toc = (items) => `<nav class="toc" aria-label="On this page"><span class="toc-h">On this page</span><ul>${items.map(([id, t]) => `<li><a href="#${id}">${esc(t)}</a></li>`).join('')}</ul></nav>`;
+const medal = (name) => `<div class="medal" aria-hidden="true">${icon(name, 'medal-ic')}</div>`;
+const ticks = (list) => `<ul class="ticks">${list.map((x) => `<li>${icon('check', 'tick')}<span>${esc(x)}</span></li>`).join('')}</ul>`;
 const guidesFor = (slug) => guides.filter((g) => g.services.includes(slug));
 const pages = []; // for sitemap
 
@@ -232,6 +237,7 @@ function layout({ path, title, description, body, schema = [], crumbs = null, og
 ${allSchema.map(jsonld).join('\n')}
 </head>
 <body class="${bodyClass}">
+${iconSprite()}
 <a class="skip" href="#main">Skip to content</a>
 <div class="topbar"><div class="wrap topbar-in">
   <span>${esc(B.license)}, bonded and insured</span>
@@ -319,7 +325,7 @@ const estimateBlock = ({ city = null, service = null } = {}) => `
   .replace(service ? `<option>${esc(service.short)}</option>` : '§', service ? `<option selected>${esc(service.short)}</option>` : '§');
 
 const serviceIndex = (list = services) => `<ul class="svc-index">${list.map((s) => `
-  <li><a href="${svcUrl(s)}"><span class="svc-name">${esc(s.name)}</span><span class="svc-blurb">${esc(s.blurb)}</span><span class="svc-cost">Typical cost: ${esc(s.cost.range)}</span></a></li>`).join('')}
+  <li><a href="${svcUrl(s)}">${icon(s.slug, 'svc-ic')}<span class="svc-text"><span class="svc-name">${esc(s.name)}</span><span class="svc-blurb">${esc(s.blurb)}</span><span class="svc-cost">Typical cost: ${esc(s.cost.range)}</span></span></a></li>`).join('')}
 </ul>`;
 
 const utilityTable = () => `<div class="table-scroll"><table class="util-table">
@@ -337,7 +343,7 @@ const steps = [
 ];
 const stepsBlock = `<ol class="steps">${steps.map(([h, p]) => `<li><h3>${esc(h)}</h3><p>${esc(p)}</p></li>`).join('')}</ol>`;
 
-const guideList = (list) => `<ul class="q-list">${list.map((g) => `<li><a href="${guideUrl(g)}"><span class="q-q">${esc(g.q)}</span><span class="q-a">${esc(firstSentence(g.answer))}</span></a></li>`).join('')}</ul>`;
+const guideList = (list) => `<ul class="q-list">${list.map((g) => `<li><a href="${guideUrl(g)}">${icon(g.topic, 'q-ic')}<span class="q-q">${esc(g.q)}</span><span class="q-a">${esc(firstSentence(g.answer))}</span></a></li>`).join('')}</ul>`;
 
 // ───────────── pages ─────────────
 function home() {
@@ -358,6 +364,12 @@ function home() {
 
 <section class="section intro"><div class="wrap narrow">
   <p class="lead">${esc(B.name)} is a licensed C-10 electrical contractor based in ${esc(B.city)}, California. We do residential, rural and light commercial electrical work along the I-80 corridor, including panel upgrades, EV chargers, generator hookups for PG&amp;E shutoffs, rewiring older homes, and power for barns, shops and ADUs. Every job is permitted and inspected.</p>
+  <ul class="quick">
+    <li>${icon('permit', 'quick-ic')}<span><strong>Licensed C-10</strong> #${esc(B.licenseNumber)}</span></li>
+    <li>${icon('check', 'quick-ic')}<span><strong>Permits handled</strong> on every job</span></li>
+    <li>${icon('pin', 'quick-ic')}<span><strong>${cities.length} towns</strong> from Sacramento to Nevada City</span></li>
+    <li>${icon('costs', 'quick-ic')}<span><strong>Free estimates</strong> for projects</span></li>
+  </ul>
   <p class="also">Also serving ${offRoute.map((c) => `<a href="${cityUrl(c)}">${esc(c.name)}</a>`).join(', ').replace(/, ([^,]*)$/, ' and $1')}.</p>
 </div></section>
 
@@ -367,7 +379,7 @@ function home() {
 </div></section>
 
 <section class="section band-psps" aria-labelledby="psps-h"><div class="wrap psps-grid">
-  <div>
+  <div>${medal('generator-installation')}
     <h2 id="psps-h">Ready for the next shutoff</h2>
     <p>Above Auburn, PG&amp;E Public Safety Power Shutoffs and winter storm outages can last days, and on a well, no power means no water. We install generator interlocks, inlet boxes, transfer switches and standby generators so you choose what stays on.</p>
     <a class="btn btn-call" href="/services/generator-installation/">Generator hookups</a>
@@ -381,8 +393,12 @@ function home() {
 
 <section class="section" aria-labelledby="util-h"><div class="wrap">
   <h2 id="util-h">Three utilities, a dozen permit offices</h2>
-  <p class="section-intro">Between Sacramento and Colfax your power comes from SMUD, Roseville Electric or PG&amp;E, and your permit from one of a dozen city and county offices. We work with all of them, and knowing which applies is half of scheduling a panel upgrade.</p>
-  ${utilityTable()}
+  <p class="section-intro">Between Sacramento and Colfax your power comes from one of three utilities. We work with all of them, and knowing which one serves you is half of scheduling a panel upgrade.</p>
+  <div class="util-groups">${[['PG&E', 'pge', 'Most of Placer, Nevada and El Dorado counties, plus Folsom'], ['SMUD', 'smud', 'Sacramento and Citrus Heights'], ['Roseville Electric', 'roseville', 'City of Roseville only']].map(([u, k, note]) => `
+    <div class="util-group util-g-${k}">${icon('tower', 'ug-ic')}<h3>${esc(u)}</h3><p>${esc(note)}</p>
+      <ul class="town-chips">${cities.filter((c) => c.utility.startsWith(u.split(' ')[0])).map((c) => `<li><a href="${cityUrl(c)}">${esc(c.name)}</a></li>`).join('')}</ul></div>`).join('')}
+  </div>
+  <p class="more-line"><a href="/service-areas/">See permit offices for every town</a></p>
 </div></section>
 
 <section class="section" aria-labelledby="steps-h"><div class="wrap">
@@ -430,14 +446,17 @@ function servicePage(s) {
   const featuredIn = cities.filter((c) => c.focus.includes(s.slug));
   const body = `
 <section class="hero hero-inner"><div class="wrap">
+  <div class="hero-grid"><div>
   <h1>${esc(s.name)}</h1>
   <p class="hero-answer">${esc(s.answer)}</p>
   <div class="hero-actions"><a class="btn btn-call" href="${telHref}">Call ${esc(B.phone)}</a><a class="btn btn-ghost" href="#estimate">Get a quote</a></div>
+  </div>${medal(s.slug)}</div>
 </div></section>
+<div class="wrap">${toc([...s.sections.map((x) => [slugify(x.h), x.h]), ['faq-h', 'Questions'], ['estimate', 'Get a quote']])}</div>
 
 <section class="section"><div class="wrap svc-layout">
   <article class="prose">
-    ${s.sections.map((sec) => `<h2>${esc(sec.h)}</h2>${sec.p.map((p) => `<p>${esc(p)}</p>`).join('')}`).join('')}
+    ${s.sections.map((sec) => `<h2 id="${slugify(sec.h)}">${esc(sec.h)}</h2>${sec.p.map((p) => `<p>${esc(p)}</p>`).join('')}`).join('')}
   </article>
   <aside class="svc-aside">
     <div class="cost-box">
@@ -454,7 +473,7 @@ function servicePage(s) {
     </div>
     <div class="signs-box">
       <h2>Signs you need this</h2>
-      <ul>${s.signs.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>
+      ${ticks(s.signs)}
     </div>
   </aside>
 </div></section>
@@ -541,25 +560,26 @@ function cityPage(c) {
   <p class="hero-answer">${esc(answer)}</p>
   <div class="hero-actions"><a class="btn btn-call" href="${telHref}">Call ${esc(B.phone)}</a><a class="btn btn-ghost" href="#estimate">Get an estimate</a></div>
   <dl class="facts">
-    <div><dt>Elevation</dt><dd>${fmt(c.elev)} ft</dd></div>
-    <div><dt>Utility</dt><dd>${esc(c.utility)}</dd></div>
-    <div><dt>County</dt><dd>${esc(c.county)}</dd></div>
-    <div><dt>From our shop</dt><dd>${c.drive ? `about ${c.drive} min` : 'We’re here'}</dd></div>
-    <div><dt>ZIP codes</dt><dd>${c.zips.join(', ')}</dd></div>
+    <div>${icon('mountain', 'fact-ic')}<dt>Elevation</dt><dd>${fmt(c.elev)} ft</dd></div>
+    <div>${icon('tower', 'fact-ic')}<dt>Utility</dt><dd>${esc(c.utility)}</dd></div>
+    <div>${icon('pin', 'fact-ic')}<dt>County</dt><dd>${esc(c.county)}</dd></div>
+    <div>${icon('clock', 'fact-ic')}<dt>From our shop</dt><dd>${c.drive ? `about ${c.drive} min` : 'We’re here'}</dd></div>
+    <div>${icon('permit', 'fact-ic')}<dt>ZIP codes</dt><dd>${c.zips.join(', ')}</dd></div>
   </dl>
 </div>
 ${c.route !== null || c.spur !== undefined ? `<div class="wrap-wide hero-route">${routeProfile({ current: c.slug })}</div>` : ''}
 </section>
 
+<div class="wrap">${toc([['local', `Work in ${c.name}`], ['popular', 'Most requested'], ['faq-h', 'Questions'], ['cg-h', 'Guides'], ['estimate', 'Book'] ])}</div>
 <section class="section"><div class="wrap narrow prose">
-  <h2>Electrical work in ${esc(c.name)}</h2>
+  <h2 id="local">Electrical work in ${esc(c.name)}</h2>
   <p class="lead">${esc(c.lede)}</p>
   ${c.notes.map((n) => `<p>${esc(n)}</p>`).join('')}
   <p><strong>Permits:</strong> issued by ${esc(withThe(c.permits))}.</p>
 </div></section>
 
 <section class="section"><div class="wrap">
-  <h2>Most requested in ${esc(c.name)}</h2>
+  <h2 id="popular">Most requested in ${esc(c.name)}</h2>
   ${serviceIndex(focus)}
   <h3 class="also-h">We also handle</h3>
   <ul class="related">${others.map((s) => `<li><a href="${svcUrl(s)}">${esc(s.name)}</a></li>`).join('')}</ul>
@@ -703,19 +723,22 @@ function guidePage(g) {
   const faqs = g.faqs;
   const body = `
 <section class="hero hero-inner"><div class="wrap">
+  <div class="hero-grid"><div>
   <h1>${esc(g.q)}</h1>
   <p class="hero-answer">${esc(g.answer)}</p>
   <p class="byline">Written by ${esc(B.owner)}, licensed electrician at ${esc(B.name)}. Reviewed ${MONTH}.</p>
+  </div>${medal(g.topic)}</div>
 </div></section>
+<div class="wrap">${toc([['key-facts', 'Key facts'], ...g.sections.map((x) => [slugify(x.h), x.h]), ['faq-h', 'Related questions']])}</div>
 
 <section class="section"><div class="wrap svc-layout">
   <article class="prose">
-    ${g.sections.map((sec) => `<h2>${esc(sec.h)}</h2>${sec.p.map((p) => `<p>${esc(p)}</p>`).join('')}`).join('')}
+    ${g.sections.map((sec) => `<h2 id="${slugify(sec.h)}">${esc(sec.h)}</h2>${sec.p.map((p) => `<p>${esc(p)}</p>`).join('')}`).join('')}
   </article>
   <aside class="svc-aside">
-    <div class="signs-box key-facts">
+    <div class="signs-box key-facts" id="key-facts">
       <h2>Key facts</h2>
-      <ul>${g.facts.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>
+      ${ticks(g.facts)}
     </div>
     <div class="cost-box">
       <h2>Need this done?</h2>
@@ -755,7 +778,7 @@ function guidesIndex() {
 </div></section>
 <section class="section"><div class="wrap narrow">
   <nav class="faq-toc" aria-label="Guide topics"><ul>${guideTopics.map((t) => `<li><a href="#${t.key}">${esc(t.name)}</a></li>`).join('')}</ul></nav>
-  ${guideTopics.map((t) => `<section class="faq-group" id="${t.key}"><h2>${esc(t.name)}</h2>${guideList(guides.filter((g) => g.topic === t.key))}</section>`).join('')}
+  ${guideTopics.map((t) => `<section class="faq-group" id="${t.key}"><h2 class="topic-h">${icon(t.key, 'topic-ic')}${esc(t.name)}</h2>${guideList(guides.filter((g) => g.topic === t.key))}</section>`).join('')}
   <p class="faq-more">Looking for a term? See the <a href="/glossary/">electrical glossary</a>.</p>
 </div></section>
 ${estimateBlock()}`;
@@ -782,7 +805,7 @@ function pricingPage() {
   <div class="table-scroll"><table class="util-table price-table">
     <caption>Typical installed prices, including permit, for single-family homes between Sacramento and Colfax</caption>
     <thead><tr><th scope="col">Service</th><th scope="col">Typical price</th><th scope="col">What changes the price</th><th scope="col">Time</th></tr></thead>
-    <tbody>${services.map((s) => `<tr><th scope="row"><a href="${svcUrl(s)}">${esc(s.name)}</a></th><td class="price">${esc(s.cost.range)}</td><td>${esc(s.cost.note.replace(/^./, (m) => m.toUpperCase()))}</td><td>${esc(s.time)}</td></tr>`).join('')}</tbody>
+    <tbody>${services.map((s) => `<tr><th scope="row"><a class="price-svc" href="${svcUrl(s)}">${icon(s.slug, 'row-ic')}<span>${esc(s.name)}</span></a></th><td class="price">${esc(s.cost.range)}</td><td>${esc(s.cost.note.replace(/^./, (m) => m.toUpperCase()))}</td><td>${esc(s.time)}</td></tr>`).join('')}</tbody>
   </table></div>
 </div></section>
 <section class="section"><div class="wrap narrow prose">

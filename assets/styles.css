@@ -367,3 +367,86 @@ p { margin: 0 0 1em; }
 .footer-grid { grid-template-columns: 1.3fr 1fr 1.4fr 1fr; }
 @media (max-width: 1000px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 600px) { .footer-grid { grid-template-columns: 1fr; } }
+
+/* ── Illustrations ── */
+.sprite * { fill: none; }
+svg { --ic-line: var(--night); --ic-a: var(--tan); --ic-b: var(--rust); --ic-s: #FBF8F1; --ic-d: var(--night-2); }
+.s { fill: var(--ic-s); } .a { fill: var(--ic-a); } .b { fill: var(--ic-b); } .d { fill: var(--ic-d); }
+.l { stroke: var(--ic-line); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.br { stroke-width: 3.5; }
+.medal { flex: none; width: clamp(150px, 16vw, 220px); aspect-ratio: 1; border-radius: 50%; background: var(--night-2); box-shadow: 0 0 0 6px var(--night), 0 0 0 10px var(--rust), 0 0 0 12px var(--tan); display: grid; place-items: center; }
+.medal-ic { width: 58%; height: 58%; --ic-line: var(--night-deep); }
+.hero-grid { display: flex; justify-content: space-between; align-items: center; gap: clamp(2rem, 6vw, 5rem); }
+.hero-grid > div:first-child { min-width: 0; }
+@media (max-width: 760px) {
+  .hero-grid { flex-direction: column-reverse; align-items: flex-start; gap: 1.5rem; }
+  .hero-grid .medal { width: 96px; box-shadow: 0 0 0 4px var(--night), 0 0 0 7px var(--rust); }
+}
+.band-psps .medal { width: 120px; margin-bottom: 1.5rem; box-shadow: 0 0 0 5px var(--paper-2), 0 0 0 9px var(--rust); }
+
+/* Service tiles: picture first, so the list can be scanned by shape */
+.svc-index a { grid-template-columns: 64px minmax(0, 1fr); gap: 1.1rem; align-items: start; padding: 1.25rem 0.5rem 1.25rem 0; }
+.svc-index a::before { display: none; }
+.svc-ic { width: 64px; height: 64px; border-radius: 14px; background: var(--paper-2); padding: 8px; transition: background 0.15s; }
+.svc-index a:hover .svc-ic, .svc-index a:focus-visible .svc-ic { background: var(--tan); }
+.svc-text { display: grid; gap: 0.25rem; min-width: 0; }
+
+/* Guide question lists */
+.q-list a { grid-template-columns: 40px minmax(0, 1fr); column-gap: 1rem; padding-left: 0; }
+.q-list a::before { display: none; }
+.q-ic { width: 40px; height: 40px; grid-row: span 2; margin-top: 2px; }
+.topic-h { display: flex; align-items: center; gap: 0.75rem; }
+.topic-ic { width: 52px; height: 52px; flex: none; }
+
+/* Tick lists for signs and key facts */
+.ticks { list-style: none; margin: 0; padding: 0; }
+.ticks li { display: grid; grid-template-columns: 22px 1fr; gap: 0.7rem; align-items: start; padding: 0.6rem 0; border-bottom: 1px solid var(--rule); }
+.tick { width: 22px; height: 22px; margin-top: 3px; }
+.signs-box li::before { display: none; }
+.signs-box li { padding-left: 0; }
+
+/* City fact strip */
+.facts div { display: grid; grid-template-columns: 34px 1fr; column-gap: 0.6rem; align-items: center; }
+.fact-ic { width: 34px; height: 34px; grid-row: span 2; --ic-line: var(--night-deep); }
+
+/* Utility groups on the home page */
+.util-groups { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem; }
+.util-group { background: #fff; border-top: 6px solid var(--ug, var(--rust)); padding: 1.4rem 1.4rem 1.5rem; }
+.util-g-pge { --ug: #2F5D8A; } .util-g-smud { --ug: #3C7A4A; } .util-g-roseville { --ug: var(--tan-deep); }
+.util-group h3 { margin: 0.5rem 0 0.25rem; font-size: 1.3rem; }
+.util-group p { color: var(--ink-soft); font-size: 1rem; }
+.util-group .town-chips a { background: var(--paper); font-size: 0.95rem; padding: 0.4rem 0.7rem; }
+.ug-ic { width: 44px; height: 44px; }
+.more-line { margin-top: 1.25rem; font-weight: 700; }
+@media (max-width: 860px) { .util-groups { grid-template-columns: 1fr; } }
+
+/* Pricing table icons */
+.price-svc { display: flex; align-items: center; gap: 0.75rem; white-space: normal; }
+.row-ic { width: 36px; height: 36px; flex: none; }
+
+/* On-this-page jump menu */
+.toc { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem; padding: 1.25rem 0 0; }
+.toc-h { font-weight: 700; color: var(--ink-soft); font-size: 0.95rem; }
+.toc ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.toc a { display: inline-block; padding: 0.45rem 0.8rem; min-height: 40px; line-height: 1.5; border-radius: 999px; background: #fff; border: 1px solid var(--rule); color: var(--ink); text-decoration: none; font-size: 0.95rem; font-weight: 700; }
+.toc a:hover { border-color: var(--rust); color: var(--rust-deep); }
+.toc + .section, .wrap:has(> .toc) + .section { padding-top: clamp(2rem, 4vw, 3rem); }
+[id] { scroll-margin-top: 96px; }
+
+/* Reading comfort */
+.prose p, .prose li { line-height: 1.72; }
+.prose p { max-width: 64ch; }
+.prose h2 { margin-top: 2em; padding-top: 0.2em; }
+.hero-answer { line-height: 1.55; }
+.faq-list details p { line-height: 1.7; }
+.faq-list summary { min-height: 48px; }
+.medal-ic { width: 66%; height: 66%; }
+.quick { list-style: none; margin: 2rem 0 1.5rem; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem 1.5rem; }
+.quick li { display: grid; grid-template-columns: 44px 1fr; gap: 0.8rem; align-items: center; font-size: 1rem; line-height: 1.35; }
+.quick strong { display: block; font: 700 1.1rem var(--f-display); font-variation-settings: 'wdth' 108; }
+.quick-ic { width: 44px; height: 44px; }
+@media (max-width: 520px) { .quick { grid-template-columns: 1fr; } }
+.medal { height: clamp(150px, 16vw, 220px); }
+.band-psps .medal { height: 120px; }
+@media (max-width: 760px) { .hero-grid .medal { height: 96px; } }
+@media (max-width: 860px) { .svc-layout .svc-aside { order: -1; } }
