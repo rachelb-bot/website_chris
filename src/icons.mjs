@@ -41,6 +41,9 @@ export const icons = {
   older: `<path d="M6 28L32 8l26 20" fill="none" ${L} stroke-linejoin="round"/><rect x="12" y="26" width="40" height="32" class="a" ${L}/><path d="M44 16V8h6v12" class="b" ${L}/>
     <rect x="18" y="34" width="10" height="10" class="s" ${L}/><path d="M23 34v10M18 39h10" ${L}/><rect x="34" y="38" width="12" height="20" class="b" ${L}/>`,
   rules: `<path d="M14 6h26l12 12v40H14z" class="s" ${L} stroke-linejoin="round"/><path d="M40 6v12h12" fill="none" ${L}/><path d="M22 28h22M22 36h22M22 44h12" ${L}/><circle cx="44" cy="48" r="7" class="b" ${L}/><path d="M41 48l2 2 4-4" fill="none" stroke="var(--ic-s)" stroke-width="2.5"/>`,
+  phone: `<path d="M18 6h8l4 12-6 4c3 7 8 12 15 15l4-6 12 4v8c0 4-3 7-7 7C27 50 14 37 14 13c0-4 0-7 4-7z" class="a" class="l"/>`,
+  mail: `<rect x="6" y="14" width="52" height="36" rx="4" class="s" class="l"/><path d="M8 17l24 19 24-19" fill="none" class="l"/>`,
+  quote: `<rect x="12" y="6" width="40" height="52" rx="4" class="s" class="l"/><path d="M20 18h24M20 26h24M20 34h14" class="l"/><circle cx="42" cy="46" r="8" class="a" class="l"/><path d="M42 41v10M45 43c-1-1-6-1-6 1s6 2 6 4-5 2-6 1" fill="none" class="l"/>`,
   check: `<circle cx="32" cy="32" r="26" class="b"/><path d="M20 33l8 8 16-17" fill="none" stroke="var(--ic-s)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>`,
   pin: `<path d="M32 58S12 36 12 24a20 20 0 0 1 40 0c0 12-20 34-20 34z" class="b" ${L}/><circle cx="32" cy="24" r="7" class="s" ${L}/>`,
   clock: `<circle cx="32" cy="32" r="24" class="s" ${L}/><path d="M32 18v14l10 6" fill="none" class="l br"/>`,

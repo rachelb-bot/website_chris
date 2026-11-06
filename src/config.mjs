@@ -11,7 +11,9 @@ export const business = {
   domain: 'https://www.off80electric.com', // TODO: final domain (no trailing slash)
   phone: '(530) 368-5077',
   phoneE164: '+15303685077',
-  email: 'hello@off80electric.com', // TODO: real email
+  email: 'info@off80electric.com', // public address; confirmation emails are sent from this address
+  // Where new quote requests and messages are delivered. Set NOTIFY_EMAIL in Netlify's environment variables.
+  notifyEmail: process.env.NOTIFY_EMAIL || '', // TODO: inbox address for new requests
   license: 'CA C-10 License #1128029', // TODO: confirm the license class is C-10
   licenseNumber: '1128029',
   street: '', // leave blank to run as a service-area business (address hidden), or add a street

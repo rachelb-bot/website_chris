@@ -248,7 +248,8 @@ ${iconSprite()}
   <button class="nav-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
   <nav id="site-nav" class="site-nav" aria-label="Main">
     <ul>${nav.map((n) => `<li><a href="${n.url}"${path.startsWith(n.url) ? ' aria-current="page"' : ''}>${n.name}</a></li>`).join('')}</ul>
-    <a class="btn btn-call" href="${telHref}">Call ${esc(B.phone)}</a>
+    <a class="nav-phone" href="${telHref}">${icon('phone', 'nav-ic')}${esc(B.phone)}</a>
+    <a class="btn btn-call" href="/contact/#quote" data-open="quote">Request a quote</a>
   </nav>
 </div></header>
 ${crumbHtml}
@@ -256,7 +257,9 @@ ${crumbHtml}
 ${body}
 </main>
 ${footer()}
-<div class="callbar"><a href="${telHref}" class="btn btn-call">Call now</a><a href="/contact/" class="btn btn-ghost-dark">Get an estimate</a></div>
+${helpDialog()}
+<button class="launcher" type="button" data-open="menu" aria-haspopup="dialog">${icon('check', 'launch-ic')}Get in touch</button>
+<div class="callbar"><a href="${telHref}" class="btn btn-call">${icon('phone', 'bar-ic')}Call</a><a href="/contact/" class="btn btn-ghost-dark" data-open="menu" aria-haspopup="dialog">Get in touch</a></div>
 <script src="/assets/main.js" defer></script>
 </body>
 </html>`;
@@ -301,28 +304,74 @@ const faqBlock = (faqs, heading = 'Questions people ask') => faqs.length ? `
 const serviceOptions = services.map((s) => `<option>${esc(s.short)}</option>`).join('');
 const cityOptions = [...cities].sort((a, b) => a.name.localeCompare(b.name)).map((c) => `<option>${esc(c.name)}</option>`).join('');
 
+// ── Ways to get in touch: one vocabulary across the whole site ──
+const helpItems = [
+  { key: 'quote', icon: 'quote', name: 'Request a quote', note: 'Free for projects. Add photos if you have them.', href: '/contact/#quote' },
+  { key: 'call', icon: 'phone', name: 'Give us a call', note: `${B.phone}, Mon–Fri 7am–5pm`, href: `tel:${B.phoneE164}` },
+  { key: 'message', icon: 'mail', name: 'Send a message', note: 'Questions or scheduling. We reply within one business day.', href: '/contact/#message' },
+  { key: 'emergency', icon: 'emergency-electrician', name: 'Electrical emergency', note: 'Burning smell, sparks, or part of the house without power', href: '/contact/#emergency' },
+];
+const helpOptions = (cls = 'help-list') => `<ul class="${cls}">${helpItems.map((h) => `<li><a class="help-opt help-${h.key}" href="${h.href}"${h.key === 'call' ? '' : ` data-open="${h.key}"`}>
+  ${icon(h.icon, 'help-ic')}<span class="help-text"><span class="help-name">${esc(h.name)}</span><span class="help-note">${esc(h.note)}</span></span></a></li>`).join('')}</ul>`;
+
+const quoteForm = (id) => `<form class="form" name="quote" method="POST" action="/thanks/" data-netlify="true" netlify-honeypot="company" enctype="multipart/form-data">
+  <input type="hidden" name="form-name" value="quote">
+  <p class="hp"><label>Company <input name="company" tabindex="-1" autocomplete="off"></label></p>
+  <div class="field"><label for="${id}-name">Name</label><input id="${id}-name" name="name" autocomplete="name" required></div>
+  <div class="field"><label for="${id}-phone">Phone</label><input id="${id}-phone" name="phone" type="tel" autocomplete="tel" required></div>
+  <div class="field"><label for="${id}-email">Email <span class="opt">(optional)</span></label><input id="${id}-email" name="email" type="email" autocomplete="email"></div>
+  <div class="field"><label for="${id}-town">Town</label><select id="${id}-town" name="town" required><option value="">Choose your town</option>${cityOptions}<option>Somewhere else</option></select></div>
+  <div class="field field-wide"><label for="${id}-service">What do you need?</label><select id="${id}-service" name="service" class="svc-select"><option value="">Choose a service</option>${serviceOptions}<option>Something else</option></select></div>
+  <div class="field field-wide"><label for="${id}-msg">Details</label><textarea id="${id}-msg" name="message" rows="3" placeholder="Panel brand, what’s happening, best time to call"></textarea></div>
+  <div class="field field-wide"><label for="${id}-photos">Photos <span class="opt">(optional, a photo of your panel helps)</span></label><input id="${id}-photos" name="photos" type="file" accept="image/*" multiple></div>
+  <fieldset class="field field-wide pref"><legend>How should we reply?</legend>
+    <label><input type="radio" name="reply" value="Call" checked> Call</label><label><input type="radio" name="reply" value="Text"> Text</label><label><input type="radio" name="reply" value="Email"> Email</label></fieldset>
+  <button class="btn btn-call field-wide" type="submit">Request a quote</button>
+  <p class="spam-note field-wide">We’ll send a confirmation from <strong>${esc(B.email)}</strong>. Can’t find it? Check your spam or promotions folder.</p>
+</form>`;
+const messageForm = (id) => `<form class="form" name="message" method="POST" action="/thanks/message/" data-netlify="true" netlify-honeypot="company">
+  <input type="hidden" name="form-name" value="message">
+  <p class="hp"><label>Company <input name="company" tabindex="-1" autocomplete="off"></label></p>
+  <div class="field"><label for="${id}-name">Name</label><input id="${id}-name" name="name" autocomplete="name" required></div>
+  <div class="field"><label for="${id}-contact">Phone or email</label><input id="${id}-contact" name="contact" autocomplete="email" required></div>
+  <div class="field field-wide"><label for="${id}-msg">Message</label><textarea id="${id}-msg" name="message" rows="4" required></textarea></div>
+  <button class="btn btn-call field-wide" type="submit">Send message</button>
+  <p class="spam-note field-wide">If you gave an email, we’ll send a confirmation from <strong>${esc(B.email)}</strong>. Can’t find it? Check your spam or promotions folder.</p>
+</form>`;
+const emergencySteps = () => `<ol class="em-steps">
+  <li><strong>Turn off the breaker</strong> for that area, or the main breaker if you’re not sure which one.</li>
+  <li><strong>Smoke or flames?</strong> Get everyone out and call 911.</li>
+  <li><strong>Power line down?</strong> Stay 30 feet away and call PG&amp;E at 1-800-743-5002 (SMUD: 1-888-456-7683).</li>
+  <li><strong>Then call us.</strong> We’ll tell you if it’s safe to wait.</li>
+</ol>
+<a class="btn btn-emergency" href="${telHref}">${icon('phone', 'bar-ic')}Call ${esc(B.phone)}</a>`;
+
+const helpDialog = () => `<dialog class="help" id="help" aria-labelledby="help-title">
+  <div class="help-head"><button class="help-back" type="button" data-back hidden>Back</button><h2 id="help-title" class="help-title">How can we help?</h2><button class="help-close" type="button" data-close aria-label="Close">✕</button></div>
+  <div data-view="menu">${helpOptions()}</div>
+  <div data-view="quote" hidden><p class="help-lede">Tell us about the job. We’ll reply within one business day with a price or a time to look at it.</p>${quoteForm('dq')}</div>
+  <div data-view="message" hidden><p class="help-lede">Questions, scheduling or anything else. We reply within one business day.</p>${messageForm('dm')}</div>
+  <div data-view="emergency" hidden><p class="help-lede">Burning smell, sparks, a buzzing panel or part of the house without power? Do this first:</p>${emergencySteps()}</div>
+</dialog>`;
+
+// Bottom-of-page section on every page: the same four choices as large tiles
 const estimateBlock = ({ city = null, service = null } = {}) => `
-<section class="section estimate" id="estimate" aria-labelledby="est-h"><div class="wrap estimate-grid">
+<section class="section estimate" id="estimate" aria-labelledby="est-h"${service ? ` data-service="${esc(service.short)}"` : ''}><div class="wrap estimate-grid">
   <div class="estimate-copy">
-    <h2 id="est-h">${city ? `Book an electrician in ${esc(city.name)}` : 'Tell us what you need'}</h2>
-    <p>Call for anything urgent. For quotes, send the form and we’ll call back within one business day, usually the same day.</p>
+    <h2 id="est-h">${city ? `Need an electrician in ${esc(city.name)}?` : service ? `Ready to talk about ${esc(service.short.toLowerCase())}?` : 'How can we help?'}</h2>
+    <p>Pick what fits. Project quotes are free, and every job is permitted and inspected.</p>
     <a class="estimate-phone" href="${telHref}">${esc(B.phone)}</a>
     <p class="estimate-hours">${esc(B.hoursText)}</p>
   </div>
-  <form class="estimate-form" name="estimate" method="POST" action="/thanks/" data-netlify="true" netlify-honeypot="company">
-    <input type="hidden" name="form-name" value="estimate">
-    <p class="hp"><label>Company <input name="company" tabindex="-1" autocomplete="off"></label></p>
-    <div class="field"><label for="f-name">Name</label><input id="f-name" name="name" autocomplete="name" required></div>
-    <div class="field"><label for="f-phone">Phone</label><input id="f-phone" name="phone" type="tel" autocomplete="tel" required></div>
-    <div class="field"><label for="f-email">Email <span class="opt">(optional)</span></label><input id="f-email" name="email" type="email" autocomplete="email"></div>
-    <div class="field"><label for="f-town">Town</label><select id="f-town" name="town" required><option value="">Choose your town</option>${cityOptions}<option>Somewhere else</option></select></div>
-    <div class="field field-wide"><label for="f-service">What do you need?</label><select id="f-service" name="service"><option value="">Choose a service</option>${serviceOptions}<option>Something else</option></select></div>
-    <div class="field field-wide"><label for="f-msg">Details</label><textarea id="f-msg" name="message" rows="4" placeholder="Panel brand, what’s happening, best time to call"></textarea></div>
-    <button class="btn btn-call field-wide" type="submit">Send request</button>
-  </form>
-</div></section>`
-  .replace(city ? `<option>${esc(city.name)}</option>` : '§', city ? `<option selected>${esc(city.name)}</option>` : '§')
-  .replace(service ? `<option>${esc(service.short)}</option>` : '§', service ? `<option selected>${esc(service.short)}</option>` : '§');
+  ${helpOptions('help-list help-tiles')}
+</div></section>`;
+
+// Short call-to-action band for the middle of long pages
+const ctaBand = (text) => `<aside class="cta-band" aria-label="Get in touch"><div class="wrap cta-in">
+  <p>${text}</p>
+  <div class="cta-actions"><a class="btn btn-call" href="/contact/#quote" data-open="quote">Request a quote</a><a class="btn btn-ghost-dark" href="${telHref}">Give us a call</a></div>
+</div></aside>`;
+const heroActions = (big = false) => `<div class="hero-actions"><a class="btn btn-call${big ? ' btn-lg' : ''}" href="/contact/#quote" data-open="quote">Request a quote</a><a class="btn btn-ghost${big ? ' btn-lg' : ''}" href="${telHref}">${icon('phone', 'btn-ic')}Give us a call</a></div>`;
 
 const popular = services.filter((s) => s.popular);
 const others = services.filter((s) => !s.popular);
@@ -361,10 +410,7 @@ function home() {
 <section class="hero hero-home"><div class="wrap">
   <h1><span class="h1-big">Electrical work, anywhere off&nbsp;80.</span>
   <span class="h1-sub">Licensed electrician in Newcastle, CA, serving Sacramento to Colfax and Highway 49 to Grass Valley.</span></h1>
-  <div class="hero-actions">
-    <a class="btn btn-call btn-lg" href="${telHref}">Call ${esc(B.phone)}</a>
-    <a class="btn btn-ghost btn-lg" href="#estimate">Request an estimate</a>
-  </div>
+  ${heroActions(true)}
 </div>
 <div class="wrap-wide hero-route">
   ${routeProfile({ animate: true })}
@@ -388,6 +434,7 @@ function home() {
   <h3 class="also-h">Everything else we do</h3>
   ${serviceIndex(others)}
 </div></section>
+${ctaBand('Know what you need? Tell us about the job and get a written price, free.')}
 
 <section class="section band-psps" aria-labelledby="psps-h"><div class="wrap psps-grid">
   <div>${medal('generator-installation')}
@@ -466,10 +513,10 @@ function servicePage(s) {
   ${s.popular ? `<p class="popular-tag">${icon('check', 'tick')}One of our three most requested services</p>` : ''}
   <h1>${esc(s.name)}</h1>
   <p class="hero-answer">${esc(s.answer)}</p>
-  <div class="hero-actions"><a class="btn btn-call" href="${telHref}">Call ${esc(B.phone)}</a><a class="btn btn-ghost" href="#estimate">Get a quote</a></div>
+  ${heroActions()}
   </div>${medal(s.slug)}</div>
 </div></section>
-<div class="wrap">${toc([...s.sections.map((x) => [slugify(x.h), x.h]), ['faq-h', 'Questions'], ['estimate', 'Get a quote']])}</div>
+<div class="wrap">${toc([...s.sections.map((x) => [slugify(x.h), x.h]), ['faq-h', 'Questions'], ['estimate', 'Request a quote']])}</div>
 
 <section class="section"><div class="wrap svc-layout">
   <article class="prose">
@@ -494,6 +541,7 @@ function servicePage(s) {
     </div>
   </aside>
 </div></section>
+${ctaBand(`Get a written price for ${esc(s.short.toLowerCase())}. Photos of your panel help us quote faster.`)}
 
 ${faqBlock(s.faqs, `${s.short}: common questions`)}
 ${guidesFor(s.slug).length ? `<section class="section" aria-labelledby="sg-h"><div class="wrap narrow">
@@ -575,7 +623,7 @@ function cityPage(c) {
 <section class="hero hero-inner"><div class="wrap">
   <h1>Electrician in ${esc(c.name)}, CA</h1>
   <p class="hero-answer">${esc(answer)}</p>
-  <div class="hero-actions"><a class="btn btn-call" href="${telHref}">Call ${esc(B.phone)}</a><a class="btn btn-ghost" href="#estimate">Get an estimate</a></div>
+  ${heroActions()}
   <dl class="facts">
     <div>${icon('mountain', 'fact-ic')}<dt>Elevation</dt><dd>${fmt(c.elev)} ft</dd></div>
     <div>${icon('tower', 'fact-ic')}<dt>Utility</dt><dd>${esc(c.utility)}</dd></div>
@@ -587,7 +635,7 @@ function cityPage(c) {
 ${c.route !== null || c.spur !== undefined ? `<div class="wrap-wide hero-route">${routeProfile({ current: c.slug })}</div>` : ''}
 </section>
 
-<div class="wrap">${toc([['local', `Work in ${c.name}`], ['popular', 'Most requested'], ['faq-h', 'Questions'], ['cg-h', 'Guides'], ['estimate', 'Book'] ])}</div>
+<div class="wrap">${toc([['local', `Work in ${c.name}`], ['popular', 'Most requested'], ['faq-h', 'Questions'], ['cg-h', 'Guides'], ['estimate', 'Get in touch'] ])}</div>
 <section class="section"><div class="wrap narrow prose">
   <h2 id="local">Electrical work in ${esc(c.name)}</h2>
   <p class="lead">${esc(c.lede)}</p>
@@ -601,6 +649,8 @@ ${c.route !== null || c.spur !== undefined ? `<div class="wrap-wide hero-route">
   <h3 class="also-h">We also handle</h3>
   <ul class="related">${others.map((s) => `<li><a href="${svcUrl(s)}">${esc(s.name)}</a></li>`).join('')}</ul>
 </div></section>
+
+${ctaBand(`Booking work in ${esc(c.name)}? We’re about ${c.drive || 5} minutes away.`)}
 
 ${faqBlock(faqs, `Electricians in ${c.name}: common questions`)}
 
@@ -693,27 +743,57 @@ function contact() {
   const crumbs = [{ name: 'Home', url: '/' }, { name: 'Contact', url: path }];
   const body = `
 <section class="hero hero-inner"><div class="wrap">
-  <h1>Contact ${esc(B.name)}</h1>
-  <p class="hero-answer">Call <a href="${telHref}">${esc(B.phone)}</a> or send the form below. ${esc(B.hoursText)}</p>
+  <h1>How can we help?</h1>
+  <p class="hero-answer">Request a free quote for a project, give us a call at <a href="${telHref}">${esc(B.phone)}</a>, or send a message. ${esc(B.hoursText)}</p>
 </div></section>
-${estimateBlock()}
+<section class="section"><div class="wrap narrow">${helpOptions('help-list help-tiles help-light')}</div></section>
+<section class="section" id="quote"><div class="wrap contact-form-wrap">
+  <div><h2>Request a quote</h2><p class="section-intro">Tell us about the job. We’ll reply within one business day with a price or a time to look at it. Project quotes are free.</p></div>
+  ${quoteForm('cq')}
+</div></section>
+<section class="section" id="message"><div class="wrap contact-form-wrap">
+  <div><h2>Send a message</h2><p class="section-intro">Questions, scheduling or anything else.</p></div>
+  ${messageForm('cm')}
+</div></section>
+<section class="section" id="emergency"><div class="wrap contact-form-wrap">
+  <div><h2>Electrical emergency</h2><p class="section-intro">Burning smell, sparks, a buzzing panel or part of the house without power? Do this first.</p></div>
+  <div>${emergencySteps()}</div>
+</div></section>
 <section class="section"><div class="wrap narrow prose">
   <h2>Where we are</h2>
   <p>Based in ${esc(B.city)}, ${B.region} ${B.zip}, ${esc(B.county)}, just off I-80 between Penryn and Auburn. We come to you: see our <a href="/service-areas/">service areas</a>.</p>
 </div></section>`;
   write(path, layout({
     path, title: `Contact | Call ${B.phone} | ${B.name}`,
-    description: `Contact ${B.name}, a licensed electrician in Newcastle, CA. Call ${B.phone} or request an estimate online.`,
+    description: `Request a free quote, call ${B.phone} or send a message to ${B.name}, a licensed electrician in Newcastle, CA.`,
     body, crumbs, pageType: 'ContactPage',
   }));
 }
 
 function simplePages() {
-  write('/thanks/', layout({
-    path: '/thanks/', title: `Request received | ${B.name}`, description: 'Thanks for your request.',
-    body: `<section class="hero hero-inner"><div class="wrap"><h1>Request received</h1><p class="hero-answer">We’ll call you back within one business day. If it’s urgent, call <a href="${telHref}">${esc(B.phone)}</a> now.</p><div class="hero-actions"><a class="btn btn-ghost" href="/">Back to home</a></div></div></section>`,
-  }).replace('index, follow', 'noindex, follow'));
-  pages.pop();
+  const thanks = (path, title, lede, nextSteps) => {
+    write(path, layout({
+      path, title: `${title} | ${B.name}`, description: lede,
+      body: `<section class="hero hero-inner"><div class="wrap"><h1>${esc(title)}</h1><p class="hero-answer">${esc(lede)}</p></div></section>
+<section class="section"><div class="wrap narrow">
+  <h2>What happens next</h2>
+  <ol class="em-steps next-steps">${nextSteps.map((x) => `<li>${x}</li>`).join('')}</ol>
+  <div class="spam-box">${icon('mail', 'spam-ic')}<p><strong>Check your inbox, and your spam folder.</strong> If you gave us an email address, a confirmation from <strong>${esc(B.email)}</strong> is on its way. If it’s not in your inbox in a few minutes, look in spam or promotions and mark it “not spam” so our reply reaches you.</p></div>
+  <div class="spam-box urgent">${icon('emergency-electrician', 'spam-ic')}<p><strong>Is it urgent?</strong> A burning smell, sparks or part of the house without power can’t wait for a reply. Turn off the breaker for that area and call <a href="${telHref}">${esc(B.phone)}</a>.</p></div>
+  <p class="more-line"><a href="/guides/">Read our homeowner guides</a> while you wait.</p>
+</div></section>`,
+    }).replace('index, follow', 'noindex, follow'));
+    pages.pop();
+  };
+  thanks('/thanks/', 'Your quote request is in', `We’ll reply within one business day, usually the same day, by your chosen method.`, [
+    `<strong>${esc(B.owner.split(' ')[0])} reviews your request</strong> and any photos you sent.`,
+    '<strong>We get back to you within one business day</strong> by call, text or email, whichever you chose.',
+    '<strong>You get a written price</strong>, or we set a time to look at the job in person. Project quotes are free.',
+  ]);
+  thanks('/thanks/message/', 'Your message is in', 'We’ll reply within one business day, usually the same day.', [
+    '<strong>We read your message</strong> the same business day.',
+    '<strong>We reply</strong> by phone or email, whichever you gave us.',
+  ]);
   write('/privacy/', layout({
     path: '/privacy/', title: `Privacy policy | ${B.name}`, description: `How ${B.name} handles information you send us.`,
     crumbs: [{ name: 'Home', url: '/' }, { name: 'Privacy', url: '/privacy/' }],
@@ -760,10 +840,12 @@ function guidePage(g) {
     <div class="cost-box">
       <h2>Need this done?</h2>
       <p>We handle ${svc.map((x) => `<a href="${svcUrl(x)}">${esc(x.short.toLowerCase())}</a>`).join(', ').replace(/, ([^,]*)$/, ' and $1')} from Sacramento to Colfax and Grass Valley.</p>
-      <a class="btn btn-call" href="#estimate">Get an estimate</a>
+      <a class="btn btn-call" href="/contact/#quote" data-open="quote">Request a quote</a>
     </div>
   </aside>
 </div></section>
+
+${ctaBand('Rather have an electrician look at it? Quotes for projects are free.')}
 
 ${faqBlock(faqs, 'Related questions')}
 

@@ -68,3 +68,33 @@ The site is the foundation, but these decide most local "electrician near me" ra
 5. **Google Search Console and Bing Webmaster Tools.** Verify the domain and submit `/sitemap.xml`.
 6. **Rebrand continuity.** Keep "Formerly Northern Spark Electric" on the site for a year, and update the truck,
    invoices and any existing listings to the new name.
+
+## Forms and emails
+
+The site has two forms, **Request a quote** (`quote`, with photo upload) and **Send a message** (`message`).
+Both are reached from the "How can we help?" chooser (floating "Get in touch" button), every page's
+call-to-action buttons, and `/contact/`. The chooser's fourth option, **Electrical emergency**, shows
+safety steps and a call button; it has no form.
+
+Every submission triggers `netlify/functions/submission-created.mjs`, which sends:
+
+| Form | To the customer (only if they gave an email) | To the business inbox |
+|---|---|---|
+| Request a quote | "We got your quote request" with next steps and a copy of their request | "New quote request: [service] in [town] from [name]", with call/text/email buttons, the town's utility and permit office, and photo links |
+| Send a message | "Thanks for your message" | "New message from [name]" |
+
+Templates are in `emails/templates.mjs`. Run `node tools/email-previews.mjs` to render samples to
+`emails/previews/`. Customer emails and the thank-you pages tell people to check spam for mail from
+info@off80electric.com.
+
+### Setup (one time)
+
+1. Create a free account at [resend.com](https://resend.com) and add the domain `off80electric.com`.
+   Add the DNS records it gives you (SPF, DKIM) plus a DMARC record. **This is what keeps the
+   emails out of spam.**
+2. In Netlify → Site configuration → Environment variables, add:
+   - `RESEND_API_KEY`: the API key from Resend
+   - `NOTIFY_EMAIL`: the inbox for new requests (comma-separate several addresses)
+3. In Netlify → Forms → Form notifications, leave Netlify's own email notifications **off**,
+   or you'll get duplicate alerts.
+4. Submit a test quote with your own email and check that both emails arrive.

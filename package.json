@@ -5,6 +5,7 @@
   "scripts": {
     "build": "node build.mjs",
     "serve": "node build.mjs && cd dist && python3 -m http.server 8080",
-    "images": "node tools/make-images.cjs"
+    "images": "node tools/make-images.cjs",
+    "emails": "node tools/email-previews.mjs"
   }
 }
