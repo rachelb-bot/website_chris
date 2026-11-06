@@ -96,7 +96,12 @@ function routeProfile({ current = null, animate = false } = {}) {
   };
   const mainD = smooth(pts);
   const spurD = 'M' + spurPts.map((p) => p.map((n) => n.toFixed(1)).join(',')).join(' L');
-  const groundD = `${mainD} L${pts.at(-1)[0]},${base + 30} L${pts[0][0]},${base + 30} Z`;
+  const groundD = `${mainD} L${W + 200},${Y(2700)} L${W + 200},${H + 400} L${-200},${H + 400} L${-200},${pts[0][1]} Z`;
+  // Far Sierra crest (decorative backdrop, rises behind Colfax) and a field of stars
+  const far = `M-200,${Y(900)} L80,${Y(1500)} L260,${Y(1150)} L430,${Y(1900)} L560,${Y(1500)} L700,${Y(2300)} L820,${Y(1900)} L960,${Y(2950)} L1060,${Y(2500)} L1170,${Y(3350)} L1290,${Y(2700)} L1400,${Y(3100)} L1400,${H + 400} L-200,${H + 400} Z`;
+  const caps = [[700, 2300], [960, 2950], [1170, 3350], [1400, 3100]].map(([x, e]) => { const y = Y(e); return `M${x - 34},${y + 30} L${x},${y} L${x + 34},${y + 30} L${x + 16},${y + 24} L${x},${y + 32} L${x - 14},${y + 23}Z`; }).join(' ');
+  let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const stars = Array.from({ length: 70 }, () => { const x = rnd() * W, y = rnd() * (H * 0.45) - 40, r = rnd() < 0.15 ? 1.6 : 0.9; return `<circle cx="${x.toFixed(0)}" cy="${y.toFixed(0)}" r="${r}"/>`; }).join('');
 
   const grid = [0, 500, 1000, 1500, 2000, 2500].map((e) => `
     <line class="rp-grid" x1="${L - 20}" x2="${W - 20}" y1="${Y(e)}" y2="${Y(e)}"/>
@@ -120,8 +125,11 @@ function routeProfile({ current = null, animate = false } = {}) {
   const svg = `<svg class="rp-svg${animate ? ' rp-animate' : ''}" viewBox="0 0 ${W} ${H}" role="img" aria-labelledby="rp-title rp-desc">
     <title id="rp-title">Service route along Interstate 80</title>
     <desc id="rp-desc">Elevation profile of towns served, from Sacramento at 30 feet to Colfax at 2,425 feet, with Highway 49 branching from Auburn to Grass Valley and Nevada City.</desc>
-    ${grid}
+    <g class="rp-stars">${stars}</g>
+    <path class="rp-far" d="${far}"/>
+    <path class="rp-snow" d="${caps}"/>
     <path class="rp-ground" d="${groundD}"/>
+    ${grid}
     <path class="rp-spur" d="${spurD}" pathLength="1"/>
     <path class="rp-wire" d="${mainD}" pathLength="1"/>
     <text class="rp-road" x="${(pts[1][0] + pts[2][0]) / 2}" y="${Y(900)}" text-anchor="middle">I-80 east</text>
@@ -146,8 +154,26 @@ const nav = [
   { url: '/contact/', name: 'Contact' },
 ];
 
+// Round badge in the spirit of the original Northern Spark truck logo: rust ring, night sky, snowy peak, bolt.
+const badge = (cls = 'logo-mark', ring = false) => `<svg class="${cls}" viewBox="0 0 120 120" aria-hidden="true">
+  <circle cx="60" cy="60" r="57" fill="#16302F"/>
+  <circle cx="60" cy="60" r="${ring ? 55 : 52}" fill="none" stroke="#B9481F" stroke-width="${ring ? 4 : 9}"/>
+  ${ring ? `<defs><path id="badge-top" d="M19,60 a41,41 0 1,1 82,0"/><path id="badge-bot" d="M11,60 a49,49 0 0,0 98,0"/></defs>
+  <circle cx="60" cy="60" r="36" fill="none" stroke="#E7CF97" stroke-width="1.2"/>
+  <circle cx="60" cy="60" r="34" fill="#0F2423"/>
+  <text font-family="Alfa Slab One, Rockwell, serif" font-size="10.5" fill="#E7CF97" letter-spacing="1.2"><textPath href="#badge-top" startOffset="50%" text-anchor="middle">OFF 80 ELECTRIC</textPath></text>
+  <text font-family="Archivo, sans-serif" font-weight="700" font-size="6.2" fill="#E7CF97" letter-spacing="1.8"><textPath href="#badge-bot" startOffset="50%" text-anchor="middle">NEWCASTLE · CALIFORNIA</textPath></text>
+  <clipPath id="badge-in"><circle cx="60" cy="60" r="34"/></clipPath>
+  <g clip-path="url(#badge-in)">` : `<clipPath id="badge-in-s"><circle cx="60" cy="60" r="47.5"/></clipPath><g clip-path="url(#badge-in-s)">`}
+    <circle cx="${ring ? 46 : 38}" cy="${ring ? 46 : 36}" r="${ring ? 3 : 5}" fill="#E7CF97"/>
+    <path d="M0,104 L30,70 L44,82 L64,52 L86,80 L98,70 L120,96 L120,120 L0,120Z" fill="#D8E3E2"/>
+    <path d="M64,52 L56,64 L62,62 L60,72 L70,66 L64,66 L72,58Z" fill="#1F403E" opacity=".55"/>
+    <path d="M0,112 L22,92 L38,100 L58,84 L80,98 L100,88 L120,104 L120,120 L0,120Z" fill="#1F403E"/>
+    <path d="M72,${ring ? 30 : 18} L62,${ring ? 50 : 46} L70,${ring ? 49 : 45} L63,${ring ? 66 : 66} L80,${ring ? 42 : 38} L72,${ring ? 43 : 39} L78,${ring ? 30 : 18}Z" fill="#fff"/>
+  </g>
+</svg>`;
 const logo = `<a class="logo" href="/" aria-label="${esc(B.name)} home">
-  <svg class="logo-mark" viewBox="0 0 40 44" aria-hidden="true"><path d="M4 4h32v20c0 9-7 15-16 18C11 39 4 33 4 24Z"/><text x="20" y="28" text-anchor="middle">80</text></svg>
+  ${badge()}
   <span class="logo-word"><span class="logo-off">Off 80</span><span class="logo-elec">Electric</span></span>
 </a>`;
 
@@ -186,7 +212,7 @@ function layout({ path, title, description, body, schema = [], crumbs = null, og
 <link rel="manifest" href="/site.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,75..125,400..900;1,100,400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Archivo:ital,wdth,wght@0,75..125,400..900;1,100,400&display=swap">
 <link rel="stylesheet" href="/assets/styles.css">
 <script>document.documentElement.classList.add('js')</script>
 ${allSchema.map(jsonld).join('\n')}
@@ -220,7 +246,7 @@ function footer() {
   return `<footer class="site-footer"><div class="wrap">
   <div class="footer-grid">
     <div class="footer-brand">
-      ${logo}
+      ${badge('footer-badge', true)}
       <p>Licensed electrician based in ${esc(B.city)}, ${B.region} ${B.zip}. Serving the I-80 corridor from Sacramento to Colfax, and Highway 49 to Grass Valley and Nevada City.</p>
       <p><a class="footer-phone" href="${telHref}">${esc(B.phone)}</a><br><a href="mailto:${B.email}">${esc(B.email)}</a></p>
       <p class="footer-small">${esc(B.license)}${B.formerly ? `<br>Formerly ${esc(B.formerly)}` : ''}</p>
