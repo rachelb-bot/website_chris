@@ -4,10 +4,9 @@ const fs = require('fs');
 const path = require('path');
 const out = path.join(__dirname, '..', 'assets');
 const fonts = `<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Archivo:wdth,wght@75..125,400..900&display=swap" rel="stylesheet">`;
-const site = fs.readFileSync(path.join(__dirname, '..', 'dist', 'index.html'), 'utf8');
-const small = site.match(/<svg class="logo-mark"[\s\S]*?<\/svg>/)[0];
-const big = small;
-const mark = (s) => (s >= 180 ? big : small).replace(/class="[^"]*"/, `width="${s}" height="${s}"`);
+const small = fs.readFileSync(path.join(__dirname, '..', 'dist', 'favicon.svg'), 'utf8');
+const big = `<img src="data:image/png;base64,${fs.readFileSync(path.join(__dirname, '..', 'assets', 'logo-off80.png')).toString('base64')}" style="width:100%;height:100%">`;
+const mark = (s) => (s >= 180 ? `<div style="width:${s}px;height:${s}px">${big}</div>` : small.replace(/class="[^"]*"/, `width="${s}" height="${s}"`));
 (async () => {
   const b = await chromium.launch();
   const p = await b.newPage();

@@ -2,16 +2,49 @@
   // Mobile menu
   const btn = document.querySelector('.nav-toggle');
   const nav = document.getElementById('site-nav');
+  const header = document.querySelector('.site-header');
+  const setHdr = () => header && document.documentElement.style.setProperty('--hdr', header.getBoundingClientRect().bottom + 'px');
   if (btn && nav) {
     btn.addEventListener('click', () => {
+      setHdr();
       const open = nav.classList.toggle('open');
       btn.setAttribute('aria-expanded', String(open));
       btn.textContent = open ? 'Close' : 'Menu';
-    });
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && nav.classList.contains('open')) { btn.click(); btn.focus(); }
+      document.documentElement.classList.toggle('nav-open', open);
     });
   }
+  // Drop-down menus: hover/focus open them on desktop (CSS); the chevron buttons toggle them on touch and phones
+  const menus = [...document.querySelectorAll('.has-menu')];
+  const closeMenus = (except) => menus.forEach((m) => { if (m !== except) { m.classList.remove('open'); m.querySelector('.sub-toggle').setAttribute('aria-expanded', 'false'); } });
+  menus.forEach((m) => {
+    // After Escape, keep the panel shut until the pointer or focus leaves this item
+    m.addEventListener('mouseleave', () => m.classList.remove('suppress'));
+    m.addEventListener('focusout', (e) => { if (!m.contains(e.relatedTarget)) m.classList.remove('suppress'); });
+    const t = m.querySelector('.sub-toggle');
+    t.addEventListener('click', () => {
+      const open = !m.classList.contains('open');
+      if (window.matchMedia('(min-width: 961px)').matches) closeMenus(m);
+      m.classList.remove('suppress');
+      m.classList.toggle('open', open);
+      t.setAttribute('aria-expanded', String(open));
+    });
+  });
+  document.addEventListener('click', (e) => { if (!e.target.closest('.has-menu') && window.matchMedia('(min-width: 961px)').matches) closeMenus(); });
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    const openMenu = menus.find((m) => m.classList.contains('open') || m.matches(':focus-within'));
+    if (openMenu) { closeMenus(); openMenu.classList.add('suppress'); openMenu.querySelector('.nav-top').focus(); return; }
+    if (nav && nav.classList.contains('open')) { btn.click(); btn.focus(); }
+  });
+
+  // Service areas: hovering a town card highlights it on the map
+  document.querySelectorAll('[data-town]').forEach((card) => {
+    const dot = document.getElementById('map-' + card.dataset.town);
+    if (!dot) return;
+    const on = () => dot.classList.add('hl'); const off = () => dot.classList.remove('hl');
+    card.addEventListener('mouseenter', on); card.addEventListener('mouseleave', off);
+    card.addEventListener('focus', on); card.addEventListener('blur', off);
+  });
 
   document.querySelectorAll('form[name="quote"]').forEach((f) => {
     const email = f.querySelector('input[type="email"]');
@@ -43,6 +76,7 @@
     if (opener) {
       e.preventDefault();
       if (nav && nav.classList.contains('open')) btn.click();
+      closeMenus();
       show(opener.dataset.open);
       prefill();
       if (!dlg.open) dlg.showModal();

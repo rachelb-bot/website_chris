@@ -138,7 +138,6 @@ ${rows([
   ['Town', esc(d.town)],
   ['Utility', city ? esc(city.utility) : ''],
   ['Permits', city ? esc(city.permits) : ''],
-  ['Drive from shop', city && city.drive ? `About ${city.drive} min` : ''],
   ['Service', esc(d.service)],
   ['Details', nl(d.message) || '<span style="color:#8A6A00;">None given</span>'],
   ['Photos', photos.length ? photos.map((p, i) => `<a href="${esc(p.url)}" style="color:${C.rust};">Photo ${i + 1}</a>`).join(' &nbsp; ') : 'None'],
@@ -146,7 +145,7 @@ ${rows([
   const text = textBlock([
     `New quote request, ${when(meta.at)}`, '',
     `${d.name}${d.town ? `, ${d.town}` : ''}`, `${d.service || 'Service not chosen'}. Prefers ${(d.reply || 'call').toLowerCase()}.`, '',
-    `Phone: ${d.phone}`, `Email: ${isEmail(d.email) ? d.email : 'Not given'}`, d.town && `Town: ${d.town}`, city && `Utility: ${city.utility}`, city && `Permits: ${city.permits}`, city && city.drive ? `Drive from shop: about ${city.drive} min` : null,
+    `Phone: ${d.phone}`, `Email: ${isEmail(d.email) ? d.email : 'Not given'}`, d.town && `Town: ${d.town}`, city && `Utility: ${city.utility}`, city && `Permits: ${city.permits}`,
     `Details: ${d.message || 'None given'}`, `Photos: ${photos.length ? photos.map((p) => p.url).join(' ') : 'None'}`, '',
     meta.confirmed ? 'A confirmation email was sent to the customer.' : 'No confirmation was sent (no email given). Reply by phone or text.',
   ]);

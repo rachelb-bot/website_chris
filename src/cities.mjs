@@ -125,7 +125,7 @@ export const cities = [
     slug: 'applegate', name: 'Applegate', county: 'Placer County', elev: 2000, route: 8,
     utility: 'PG&E', permits: 'Placer County Building Services',
     zips: ['95703'], drive: 20, lat: 38.999, lng: -120.9938,
-    lede: 'Applegate is rural foothill living at 2,000 feet: acreage, wells, shops and the kind of long electrical runs most valley electricians don’t plan for.',
+    lede: 'Applegate is rural foothill living: acreage, wells, shops and the kind of long electrical runs most valley electricians don’t plan for.',
     notes: [
       'We regularly wire shops, barns and ADUs on Applegate parcels, where the run from the main panel can be hundreds of feet. Conductor sizing for voltage drop makes the difference between a shop that works and one that dims every time the compressor kicks on.',
       'Applegate is in PG&E high fire-threat territory. Permits go through Placer County.',
@@ -137,7 +137,7 @@ export const cities = [
     slug: 'colfax', name: 'Colfax', county: 'Placer County', elev: 2425, route: 9,
     utility: 'PG&E', permits: 'City of Colfax (inside city limits) or Placer County Building Services',
     zips: ['95713'], drive: 30, lat: 39.1007, lng: -120.9533,
-    lede: 'Colfax is the top of our run, at about 2,400 feet, where I-80 starts its real climb into the Sierra. Snow, wind and shutoffs all shape the work here.',
+    lede: 'Colfax is the top of our run, where I-80 starts its real climb into the Sierra. Snow, wind and shutoffs all shape the work here.',
     notes: [
       'Colfax’s small historic downtown has older wiring in both homes and storefronts. Outside town, properties along the Iowa Hill, Canyon Way and Placer Hills corridors are rural, often on wells, and see both PG&E Public Safety Power Shutoffs and winter storm outages.',
       'Snow load and falling limbs are hard on service masts here. We repair storm damage and set up generator connections so the next outage is easier.',
@@ -149,7 +149,7 @@ export const cities = [
     slug: 'grass-valley', name: 'Grass Valley', county: 'Nevada County', elev: 2411, spur: 0,
     utility: 'PG&E', permits: 'City of Grass Valley Building Division (in city) or Nevada County Building Department',
     zips: ['95945', '95949'], drive: 35, lat: 39.2191, lng: -121.0611,
-    lede: 'Grass Valley is 25 minutes up Highway 49 from Auburn, a Gold Rush town with Gold Rush–era wiring problems and serious fire-season outage risk.',
+    lede: 'Grass Valley sits up Highway 49 from Auburn: a Gold Rush town with Gold Rush–era wiring problems and serious fire-season outage risk.',
     notes: [
       'Homes in Grass Valley’s historic core, from Victorian cottages to 1920s–40s bungalows, often still carry knob-and-tube, fuse panels or ungrounded circuits. Insurers in Nevada County are increasingly asking about both, alongside wildfire risk.',
       'Outside town toward Alta Sierra, Cedar Ridge and Rough and Ready, most properties are on wells in PG&E high fire-threat districts. Generator hookups and standby systems are a big part of the work.',

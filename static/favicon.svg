@@ -1,1 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 44"><path d="M4 4h32v20c0 9-7 15-16 18C11 39 4 33 4 24Z" fill="#1E3B2F" stroke="#F3C433" stroke-width="2.5"/><text x="20" y="28" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="15" fill="#F3C433">80</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" class="logo-mark" viewBox="0 0 120 120" aria-hidden="true">
+  <circle cx="60" cy="60" r="57" fill="#16302F"/>
+  <circle cx="60" cy="60" r="52" fill="none" stroke="#B9481F" stroke-width="9"/>
+  <clipPath id="badge-in-s"><circle cx="60" cy="60" r="47.5"/></clipPath><g clip-path="url(#badge-in-s)">
+    <circle cx="38" cy="36" r="5" fill="#E7CF97"/>
+    <path d="M0,104 L30,70 L44,82 L64,52 L86,80 L98,70 L120,96 L120,120 L0,120Z" fill="#D8E3E2"/>
+    <path d="M64,52 L56,64 L62,62 L60,72 L70,66 L64,66 L72,58Z" fill="#1F403E" opacity=".55"/>
+    <path d="M0,112 L22,92 L38,100 L58,84 L80,98 L100,88 L120,104 L120,120 L0,120Z" fill="#1F403E"/>
+    <path d="M72,18 L62,46 L70,45 L63,66 L80,38 L72,39 L78,18Z" fill="#fff"/>
+  </g>
+</svg>

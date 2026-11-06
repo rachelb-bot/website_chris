@@ -114,9 +114,6 @@ function routeProfile({ current = null, animate = false } = {}) {
   let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
   const stars = Array.from({ length: 70 }, () => { const x = rnd() * W, y = rnd() * (H * 0.45) - 40, r = rnd() < 0.15 ? 1.6 : 0.9; return `<circle cx="${x.toFixed(0)}" cy="${y.toFixed(0)}" r="${r}"/>`; }).join('');
 
-  const grid = [0, 500, 1000, 1500, 2000, 2500].map((e) => `
-    <line class="rp-grid" x1="${L - 20}" x2="${W - 20}" y1="${Y(e)}" y2="${Y(e)}"/>
-    <text class="rp-axis" x="${L - 28}" y="${Y(e) + 4}" text-anchor="end">${e === 0 ? 'sea level' : fmt(e) + ' ft'}</text>`).join('');
 
   const stop = (c, x, y, i, above) => {
     const isCur = current === c.slug;
@@ -125,22 +122,21 @@ function routeProfile({ current = null, animate = false } = {}) {
     const lx = above ? x : x + 12;
     const anchor = above ? 'middle' : 'start';
     const cls = ['rp-stop', c.home ? 'is-home' : '', isCur ? 'is-current' : ''].join(' ');
-    return `<a href="${cityUrl(c)}" class="${cls}" style="--i:${i}" aria-label="Electrician in ${esc(c.name)}, ${fmt(c.elev)} feet">
+    return `<a href="${cityUrl(c)}" class="${cls}" style="--i:${i}" aria-label="Electrician in ${esc(c.name)}">
       ${c.home ? `<circle class="rp-halo" cx="${x}" cy="${y}" r="17"/>` : ''}
       <circle class="rp-dot" cx="${x}" cy="${y}" r="${c.home || isCur ? 8 : 6}"/>
       <text class="rp-name" x="${lx}" y="${ly}" text-anchor="${anchor}">${esc(c.name)}</text>
-      <text class="rp-elev" x="${lx}" y="${ly + (above ? -17 : 17)}" text-anchor="${anchor}">${c.home ? 'Our shop · ' : ''}${fmt(c.elev)} ft</text>
+      ${c.home ? `<text class="rp-elev" x="${lx}" y="${ly + 17}" text-anchor="${anchor}">Home base</text>` : ''}
     </a>`;
   };
 
   const svg = `<svg class="rp-svg${animate ? ' rp-animate' : ''}" viewBox="0 0 ${W} ${H}" role="img" aria-labelledby="rp-title rp-desc">
     <title id="rp-title">Service route along Interstate 80</title>
-    <desc id="rp-desc">Elevation profile of towns served, from Sacramento at 30 feet to Colfax at 2,425 feet, with Highway 49 branching from Auburn to Grass Valley and Nevada City.</desc>
+    <desc id="rp-desc">Towns served along Interstate 80, from Sacramento in the valley up into the Sierra foothills at Colfax, with Highway 49 branching from Auburn to Grass Valley and Nevada City.</desc>
     <g class="rp-stars">${stars}</g>
     <path class="rp-far" d="${far}"/>
     <path class="rp-snow" d="${caps}"/>
     <path class="rp-ground" d="${groundD}"/>
-    ${grid}
     <path class="rp-spur" d="${spurD}" pathLength="1"/>
     <path class="rp-wire" d="${mainD}" pathLength="1"/>
     <text class="rp-road" x="${(pts[1][0] + pts[2][0]) / 2}" y="${Y(900)}" text-anchor="middle">I-80 east</text>
@@ -150,21 +146,90 @@ function routeProfile({ current = null, animate = false } = {}) {
   </svg>`;
 
   // Mobile/small-screen version: the same route as a vertical line
-  const list = `<ol class="rp-list" aria-label="Towns along I-80, lowest to highest">
-    ${routeCities.map((c) => `<li class="${c.home ? 'is-home' : ''}${current === c.slug ? ' is-current' : ''}"><a href="${cityUrl(c)}"><span class="rp-list-name">${esc(c.name)}</span><span class="rp-list-elev">${c.home ? 'Our shop · ' : ''}${fmt(c.elev)} ft</span></a>${c.slug === 'auburn' ? `<ol class="rp-list-spur" aria-label="Highway 49 north from Auburn">${spurCities.map((s) => `<li class="${current === s.slug ? 'is-current' : ''}"><a href="${cityUrl(s)}"><span class="rp-list-name">${esc(s.name)}</span><span class="rp-list-elev">Hwy 49 · ${fmt(s.elev)} ft</span></a></li>`).join('')}</ol>` : ''}</li>`).join('')}
+  const list = `<ol class="rp-list" aria-label="Towns along I-80, from Sacramento to Colfax">
+    ${routeCities.map((c) => `<li class="${c.home ? 'is-home' : ''}${current === c.slug ? ' is-current' : ''}"><a href="${cityUrl(c)}"><span class="rp-list-name">${esc(c.name)}</span>${c.home ? '<span class="rp-list-elev">Home base</span>' : ''}</a>${c.slug === 'auburn' ? `<ol class="rp-list-spur" aria-label="Highway 49 north from Auburn">${spurCities.map((s) => `<li class="${current === s.slug ? 'is-current' : ''}"><a href="${cityUrl(s)}"><span class="rp-list-name">${esc(s.name)}</span><span class="rp-list-elev">Hwy 49</span></a></li>`).join('')}</ol>` : ''}</li>`).join('')}
   </ol>`;
   return `<div class="route-profile">${svg}${list}</div>`;
 }
 
+// ───────────── service area map ─────────────
+// A stylised map drawn from real coordinates: roads, Folsom Lake and every town as a link.
+const MAP = { latMax: 39.31, lngMin: -121.56, k: 990, cos: 0.777 };
+const mxy = ([lat, lng]) => [(lng - MAP.lngMin) * MAP.cos * MAP.k, (MAP.latMax - lat) * MAP.k];
+const mpath = (pts) => 'M' + pts.map((p) => mxy(p).map((n) => n.toFixed(1)).join(',')).join(' L');
+const ROADS = {
+  i80: [[38.58, -121.50], [38.62, -121.42], [38.66, -121.36], [38.70, -121.31], [38.745, -121.27], [38.79, -121.236], [38.82, -121.195], [38.85, -121.17], [38.873, -121.13], [38.90, -121.07], [38.95, -121.04], [38.985, -121.012], [39.0, -120.99], [39.06, -120.97], [39.10, -120.95], [39.2, -120.88]],
+  h49: [[38.90, -121.07], [38.97, -121.068], [39.04, -121.066], [39.13, -121.07], [39.20, -121.064], [39.219, -121.061], [39.245, -121.035], [39.262, -121.016], [39.30, -120.99]],
+  us50: [[38.58, -121.50], [38.57, -121.40], [38.59, -121.30], [38.63, -121.22], [38.65, -121.17], [38.665, -121.10], [38.68, -121.05], [38.70, -120.88]],
+  h65: [[38.75, -121.27], [38.79, -121.29], [38.85, -121.30], [38.89, -121.29], [38.96, -121.31]],
+};
+const LAKE = [[38.707, -121.157], [38.73, -121.15], [38.76, -121.123], [38.79, -121.103], [38.82, -121.083], [38.845, -121.072], [38.835, -121.06], [38.80, -121.082], [38.77, -121.098], [38.74, -121.112], [38.715, -121.138]];
+// Label side for each town, chosen so neighbours in the Rocklin–Auburn cluster don't collide
+const LBL = { sacramento: 'r', 'citrus-heights': 'l', roseville: 'l', rocklin: 'l', loomis: 'l', penryn: 'l', newcastle: 'r', auburn: 'r', 'meadow-vista': 'l', applegate: 'r', colfax: 'r', 'grass-valley': 'l', 'nevada-city': 'r', 'granite-bay': 'b', lincoln: 'l', folsom: 'l', 'el-dorado-hills': 'r', 'lake-of-the-pines': 'l' };
+function areaMap({ current = null } = {}) {
+  const shield = (lat, lng, label, cls = '') => { const [x, y] = mxy([lat, lng]); const w = label.length > 2 ? 34 : 28; return `<g class="map-shield ${cls}"><rect x="${(x - w / 2).toFixed(1)}" y="${(y - 11).toFixed(1)}" width="${w}" height="22" rx="5"/><text x="${x.toFixed(1)}" y="${(y + 5).toFixed(1)}" text-anchor="middle">${label}</text></g>`; };
+  const ridges = [0, 1, 2, 3, 4].map((i) => { const pts = Array.from({ length: 9 }, (_, j) => [39.3 - j * 0.09, -121.02 + i * 0.03 - Math.sin(j * 1.3 + i) * 0.02]); return `<path class="map-ridge" d="${mpath(pts)}"/>`; }).join('');
+  const towns = cities.map((c) => {
+    const [x, y] = mxy([c.lat, c.lng]);
+    const side = LBL[c.slug] || 'r';
+    const [lx, ly, anchor] = side === 'l' ? [x - 11, y + 6, 'end'] : side === 'b' ? [x, y + 26, 'middle'] : [x + 11, y + 6, 'start'];
+    const cls = ['map-town', c.home ? 'is-home' : '', current === c.slug ? 'is-current' : ''].join(' ');
+    return `<a href="${cityUrl(c)}" class="${cls}" id="map-${c.slug}" aria-label="Electrician in ${esc(c.name)}">
+      ${current === c.slug ? `<circle class="map-ring" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="16"/>` : ''}
+      <circle class="map-dot" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${c.home || current === c.slug ? 8 : 6}"/>
+      <text class="map-name" x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="${anchor}">${esc(c.name)}</text>
+    </a>`;
+  }).join('');
+  return `<figure class="area-map">
+  <svg viewBox="-12 -12 564 778" role="img" aria-labelledby="map-t map-d">
+    <title id="map-t">Map of towns served by ${esc(B.name)}</title>
+    <desc id="map-d">${cities.length} towns along Interstate 80 from Sacramento to Colfax, Highway 49 to Grass Valley and Nevada City, Highway 65 to Lincoln and Highway 50 to Folsom and El Dorado Hills.</desc>
+    <defs><linearGradient id="map-hills" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#1F403E" stop-opacity="0"/><stop offset="1" stop-color="#2A504D"/></linearGradient></defs>
+    <rect x="-12" y="-12" width="564" height="778" rx="14" class="map-bg"/>
+    <rect x="180" y="-12" width="372" height="778" fill="url(#map-hills)"/>
+    ${ridges}
+    <text class="map-region" x="${mxy([38.98, -121.47])[0]}" y="${mxy([38.98, -121.47])[1]}">Sacramento Valley</text>
+    <text class="map-region" x="${mxy([39.2, -121.36])[0]}" y="${mxy([39.2, -121.36])[1]}">Sierra foothills</text>
+    <path class="map-lake" d="${mpath(LAKE)} Z"/>
+    <text class="map-water" x="${mxy([38.79, -121.05])[0]}" y="${mxy([38.79, -121.05])[1]}">Folsom Lake</text>
+    <path class="map-road minor" d="${mpath(ROADS.us50)}"/>
+    <path class="map-road minor" d="${mpath(ROADS.h65)}"/>
+    <path class="map-road" d="${mpath(ROADS.h49)}"/>
+    <path class="map-road major" d="${mpath(ROADS.i80)}"/>
+    ${shield(38.64, -121.40, '80', 'i')}${shield(39.055, -120.973, '80', 'i')}${shield(39.12, -121.07, '49')}${shield(38.578, -121.25, '50')}${shield(38.83, -121.30, '65')}
+    <text class="map-region small" x="${mxy([39.17, -120.905])[0]}" y="${mxy([39.17, -120.905])[1]}" text-anchor="end">to Tahoe</text>
+    ${towns}
+  </svg>
+</figure>`;
+}
+
 // ───────────── layout ─────────────
 const nav = [
-  { url: '/services/', name: 'Services' },
-  { url: '/service-areas/', name: 'Service areas' },
-  { url: '/guides/', name: 'Guides' },
+  { url: '/services/', name: 'Services', menu: 'services' },
+  { url: '/service-areas/', name: 'Service areas', menu: 'areas' },
+  { url: '/guides/', name: 'Guides', menu: 'guides' },
   { url: '/pricing/', name: 'Pricing' },
   { url: '/faq/', name: 'FAQ' },
   { url: '/contact/', name: 'Contact' },
 ];
+
+// Drop-down menus: shown on hover and keyboard focus on desktop, as expandable sections on phones
+const megaMenus = {
+  services: () => `<div class="mega-grid mega-svc">
+    <div><p class="mega-h">Most requested</p><ul class="mega-feat">${popular.map((s) => `<li><a href="${svcUrl(s)}">${icon(s.slug, 'mega-ic')}<span><strong>${esc(s.name)}</strong><span class="mega-sub">Typical ${esc(s.cost.range)}</span></span></a></li>`).join('')}</ul></div>
+    <div><p class="mega-h">Everything else</p><ul class="mega-list two">${others.map((s) => `<li><a href="${svcUrl(s)}">${icon(s.slug, 'mega-ic-s')}<span>${esc(s.name)}</span></a></li>`).join('')}</ul></div>
+  </div>
+  <p class="mega-foot"><a href="/services/">All services</a><a href="/pricing/">Prices</a><a href="/contact/#quote" data-open="quote">Request a quote</a></p>`,
+  areas: () => `<div class="mega-grid mega-areas">${['Placer County', 'Sacramento County', 'Nevada County', 'El Dorado County'].map((co) => `
+    <div><p class="mega-h">${co}</p><ul class="mega-list${co === 'Placer County' ? ' two' : ''}">${cities.filter((c) => c.county === co).sort((a, b) => a.name.localeCompare(b.name)).map((c) => `<li><a href="${cityUrl(c)}">${esc(c.name)}</a></li>`).join('')}</ul></div>`).join('')}
+  </div>
+  <p class="mega-foot"><a href="/service-areas/">See the service area map</a></p>`,
+  guides: () => `<div class="mega-grid mega-guides">${guideTopics.map((t) => `
+    <div class="mega-topic"><a class="mega-topic-h" href="/guides/#${t.key}">${icon(t.key, 'mega-ic-s')}<span>${esc(t.name)}</span></a>
+      <ul class="mega-list qs">${guides.filter((g) => g.topic === t.key).slice(0, 2).map((g) => `<li><a href="${guideUrl(g)}">${esc(g.q)}</a></li>`).join('')}</ul></div>`).join('')}
+  </div>
+  <p class="mega-foot"><a href="/guides/">All guides</a><a href="/glossary/">Electrical glossary</a><a href="/faq/">FAQ</a></p>`,
+};
 
 // Round badge in the spirit of the original Northern Spark truck logo: rust ring, night sky, snowy peak, bolt.
 const badge = (cls = 'logo-mark', ring = false) => `<svg class="${cls}" viewBox="0 0 120 120" aria-hidden="true">
@@ -224,7 +289,7 @@ function layout({ path, title, description, body, schema = [], crumbs = null, og
 <meta property="og:image:height" content="630">
 <meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#1E3B2F">
+<meta name="theme-color" content="#16302F">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/assets/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
@@ -247,7 +312,8 @@ ${iconSprite()}
   ${logo}
   <button class="nav-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
   <nav id="site-nav" class="site-nav" aria-label="Main">
-    <ul>${nav.map((n) => `<li><a href="${n.url}"${path.startsWith(n.url) ? ' aria-current="page"' : ''}>${n.name}</a></li>`).join('')}</ul>
+    <ul class="nav-list">${nav.map((n) => n.menu ? `<li class="has-menu"><a class="nav-top" href="${n.url}"${path.startsWith(n.url) ? ' aria-current="page"' : ''}>${n.name}</a><button class="sub-toggle" type="button" aria-expanded="false" aria-controls="menu-${n.menu}"><span class="sr-only">Show the ${n.name.toLowerCase()} menu</span></button>
+      <div class="mega" id="menu-${n.menu}"><div class="mega-in">${megaMenus[n.menu]()}</div></div></li>` : `<li><a class="nav-top" href="${n.url}"${path.startsWith(n.url) ? ' aria-current="page"' : ''}>${n.name}</a></li>`).join('')}</ul>
     <a class="nav-phone" href="${telHref}">${icon('phone', 'nav-ic')}${esc(B.phone)}</a>
     <a class="btn btn-call" href="/contact/#quote" data-open="quote">Request a quote</a>
   </nav>
@@ -386,11 +452,7 @@ const serviceIndex = (list = services) => `<ul class="svc-index">${list.map((s) 
   <li><a href="${svcUrl(s)}">${icon(s.slug, 'svc-ic')}<span class="svc-text"><span class="svc-name">${esc(s.name)}</span><span class="svc-blurb">${esc(s.blurb)}</span><span class="svc-cost">Typical cost: ${esc(s.cost.range)}</span></span></a></li>`).join('')}
 </ul>`;
 
-const utilityTable = () => `<div class="table-scroll"><table class="util-table">
-  <caption>Who supplies the power, and who signs off on the permit, along our route</caption>
-  <thead><tr><th scope="col">Town</th><th scope="col">Electric utility</th><th scope="col">Permits issued by</th><th scope="col">Elevation</th></tr></thead>
-  <tbody>${[...cities].sort((a, b) => a.elev - b.elev).map((c) => `<tr><th scope="row"><a href="${cityUrl(c)}">${esc(c.name)}</a></th><td><span class="util util-${c.utility.split(' ')[0].replace(/[^A-Za-z]/g, '').toLowerCase()}">${esc(c.utility)}</span></td><td>${esc(c.permits)}</td><td class="num">${fmt(c.elev)} ft</td></tr>`).join('')}</tbody>
-</table></div>`;
+
 
 const steps = [
   ['You call or send the form', 'Tell us what’s going on. Urgent problems get a call back right away; quotes within one business day.'],
@@ -414,7 +476,7 @@ function home() {
 </div>
 <div class="wrap-wide hero-route">
   ${routeProfile({ animate: true })}
-  <p class="route-caption">From 30 feet in Sacramento to 2,425 in Colfax. Every stop has a page covering who supplies the power, who issues the permit, and what we usually find in the walls there.</p>
+  <p class="route-caption">From the valley floor in Sacramento up into the foothills at Colfax. Tap any town to see its permit office, power company and the jobs we do most there.</p>
 </div></section>
 
 <section class="section intro"><div class="wrap narrow">
@@ -456,7 +518,7 @@ ${ctaBand('Know what you need? Tell us about the job and get a written price, fr
     <div class="util-group util-g-${k}">${icon('tower', 'ug-ic')}<h3>${esc(u)}</h3><p>${esc(note)}</p>
       <ul class="town-chips">${cities.filter((c) => c.utility.startsWith(u.split(' ')[0])).map((c) => `<li><a href="${cityUrl(c)}">${esc(c.name)}</a></li>`).join('')}</ul></div>`).join('')}
   </div>
-  <p class="more-line"><a href="/service-areas/">See permit offices for every town</a></p>
+  <p class="more-line"><a href="/service-areas/">See every town we serve</a></p>
 </div></section>
 
 <section class="section" aria-labelledby="steps-h"><div class="wrap">
@@ -576,20 +638,32 @@ function areasIndex() {
   const path = '/service-areas/';
   const crumbs = [{ name: 'Home', url: '/' }, { name: 'Service areas', url: path }];
   const counties = ['Placer County', 'Sacramento County', 'Nevada County', 'El Dorado County'];
+  const card = (c) => {
+    const focus = c.focus.slice(0, 3).map((x) => serviceBySlug[x]);
+    return `<li><a class="town-card${c.home ? ' is-home' : ''}" href="${cityUrl(c)}" data-town="${c.slug}">
+      <span class="tc-head"><span class="tc-name">${esc(c.name)}</span>${c.home ? '<span class="tc-tag">Home base</span>' : ''}</span>
+      <span class="tc-blurb">${esc(firstSentence(c.lede))}</span>
+      <span class="tc-meta"><span class="util util-${c.utility.split(' ')[0].replace(/[^A-Za-z]/g, '').toLowerCase()}">${esc(c.utility)}</span></span>
+      <span class="tc-svcs" aria-label="Most requested here">${focus.map((x) => `<span>${icon(x.slug, 'tc-ic')}${esc(x.short)}</span>`).join('')}</span>
+    </a></li>`;
+  };
   const body = `
-<section class="hero hero-inner hero-route-inner"><div class="wrap">
-  <h1>Service areas</h1>
-  <p class="hero-answer">${esc(B.name)} serves ${cities.length} towns across Placer, Sacramento, Nevada and El Dorado counties. Most are within 35 minutes of our Newcastle shop along I-80 or Highway 49.</p>
-</div>
-<div class="wrap-wide hero-route">${routeProfile()}</div></section>
-
-<section class="section"><div class="wrap county-grid">
-  ${counties.map((co) => `<div><h2>${co}</h2><ul class="county-list">${cities.filter((c) => c.county === co).map((c) => `<li><a href="${cityUrl(c)}"><span>${esc(c.name)}</span><span class="county-meta">${c.drive ? `about ${c.drive} min` : 'home base'}</span></a></li>`).join('')}</ul></div>`).join('')}
+<section class="hero hero-inner"><div class="wrap">
+  <h1>Where we work</h1>
+  <p class="hero-answer">${esc(B.name)} serves ${cities.length} towns across Placer, Sacramento, Nevada and El Dorado counties: up I-80 from Sacramento to Colfax, up Highway 49 to Grass Valley and Nevada City, and out to Lincoln, Folsom and El Dorado Hills.</p>
+  ${heroActions()}
 </div></section>
 
-<section class="section"><div class="wrap">
-  <h2>Utilities and permit offices by town</h2>
-  ${utilityTable()}
+<section class="section"><div class="wrap areas-layout">
+  <div class="areas-map">${areaMap()}<p class="map-note">Tap a town on the map or pick one from the list.</p></div>
+  <div class="areas-list">
+    ${counties.map((co) => { const list = cities.filter((c) => c.county === co).sort((a, b) => (b.home ? 1 : 0) - (a.home ? 1 : 0) || a.name.localeCompare(b.name)); return `
+    <section class="county" aria-labelledby="co-${slugify(co)}">
+      <h2 id="co-${slugify(co)}">${co} <span class="county-count">${list.length} ${list.length === 1 ? 'town' : 'towns'}</span></h2>
+      <ul class="town-cards">${list.map(card).join('')}</ul>
+    </section>`; }).join('')}
+    <div class="not-listed">${icon('pin', 'nl-ic')}<p><strong>Don’t see your town?</strong> If you’re near I-80, Highway 49 or Highway 50, ask anyway. We often work just outside these towns.</p><a class="btn btn-call" href="/contact/#quote" data-open="quote">Request a quote</a></div>
+  </div>
 </div></section>
 ${estimateBlock()}`;
   write(path, layout({
@@ -607,7 +681,7 @@ function cityPage(c) {
   const nearby = [...cities].filter((x) => x.slug !== c.slug)
     .map((x) => ({ x, d: Math.hypot(x.lat - c.lat, (x.lng - c.lng) * 0.78) }))
     .sort((a, b) => a.d - b.d).slice(0, 5).map((o) => o.x);
-  const answer = `${B.name} is a licensed electrician serving ${c.name}, ${c.county}, from our shop in ${B.city}${c.drive ? `, about ${c.drive} minutes away` : ''}. We handle ${focus.map((s) => s.noun).join(', ').replace(/, ([^,]*)$/, ' and $1')}, plus repairs and everything in between, with permits through ${withThe(c.permits.split(' (')[0])}.`;
+  const answer = `${B.name} is a licensed electrician serving ${c.name}, ${c.county}, from our base in ${B.city}. We handle ${focus.map((s) => s.noun).join(', ').replace(/, ([^,]*)$/, ' and $1')}, plus repairs and everything in between, with permits through ${withThe(c.permits.split(' (')[0])}.`;
   const faqs = [
     ...c.faqs,
     { q: `Who supplies electricity in ${c.name}, CA?`, a: `${c.name} is served by ${c.utility}. We coordinate disconnects, reconnects and service upgrades with ${c.utility} as part of panel and service work.` },
@@ -617,23 +691,23 @@ function cityPage(c) {
       ? { q: `Is ${c.name} affected by PG&E power shutoffs (PSPS)?`, a: c.elev >= 900 ? `Yes. ${c.name} is in the foothills, where PG&E Public Safety Power Shutoffs happen during high fire danger. A permitted generator interlock, standby generator or battery system keeps essentials running.` : `Less often than foothill towns, but PG&E can de-energize any line that passes through high fire-threat areas. Many ${c.name} homeowners add a generator inlet or battery backup as a precaution.` }
       : { q: `Does ${c.utility} offer rebates for electrical upgrades in ${c.name}?`, a: `${c.utility} has offered incentives for EV chargers, panel upgrades and electrification in recent years. Programs change often, so we confirm what’s currently available before you buy equipment.` },
     { q: `What electrical problems are common in ${c.name} homes?`, a: firstSentence(c.notes[0]) + ' ' + (c.focus.includes('home-rewiring') ? 'Older homes here often need rewiring or panel replacement.' : c.focus.includes('generator-installation') ? 'Outage preparation is one of the most common requests here.' : 'Adding capacity for EV chargers, solar and spas is one of the most common requests here.') },
-    { q: `How quickly can an electrician get to ${c.name}?`, a: c.drive ? `Our shop in Newcastle is about ${c.drive} minutes from ${c.name}. Urgent calls are often seen the same day, and estimates are usually scheduled within a few days.` : `We’re based in Newcastle, so we can usually be there the same day.` },
+    { q: `How soon can an electrician come out to ${c.name}?`, a: `Urgent problems in ${c.name} are often seen the same day, and project estimates are usually scheduled within a few days. Call ${B.phone} or request a quote online.` },
   ].filter((f, i, arr) => arr.findIndex((g) => g.q === f.q) === i);
   const body = `
-<section class="hero hero-inner"><div class="wrap">
+<section class="hero hero-inner"><div class="wrap city-hero">
+  <div class="city-hero-text">
   <h1>Electrician in ${esc(c.name)}, CA</h1>
   <p class="hero-answer">${esc(answer)}</p>
   ${heroActions()}
   <dl class="facts">
-    <div>${icon('mountain', 'fact-ic')}<dt>Elevation</dt><dd>${fmt(c.elev)} ft</dd></div>
-    <div>${icon('tower', 'fact-ic')}<dt>Utility</dt><dd>${esc(c.utility)}</dd></div>
+    <div>${icon('tower', 'fact-ic')}<dt>Power company</dt><dd>${esc(c.utility)}</dd></div>
     <div>${icon('pin', 'fact-ic')}<dt>County</dt><dd>${esc(c.county)}</dd></div>
-    <div>${icon('clock', 'fact-ic')}<dt>From our shop</dt><dd>${c.drive ? `about ${c.drive} min` : 'We’re here'}</dd></div>
-    <div>${icon('permit', 'fact-ic')}<dt>ZIP codes</dt><dd>${c.zips.join(', ')}</dd></div>
+    <div>${icon('permit', 'fact-ic')}<dt>Permits</dt><dd>${esc(withThe(c.permits.split(' (')[0]).replace(/^the /, ''))}</dd></div>
+    <div>${icon('mail', 'fact-ic')}<dt>ZIP codes</dt><dd>${c.zips.slice(0, 4).join(', ')}${c.zips.length > 4 ? ' and more' : ''}</dd></div>
   </dl>
-</div>
-${c.route !== null || c.spur !== undefined ? `<div class="wrap-wide hero-route">${routeProfile({ current: c.slug })}</div>` : ''}
-</section>
+  </div>
+  <div class="city-map">${areaMap({ current: c.slug })}</div>
+</div></section>
 
 <div class="wrap">${toc([['local', `Work in ${c.name}`], ['popular', 'Most requested'], ['faq-h', 'Questions'], ['cg-h', 'Guides'], ['estimate', 'Get in touch'] ])}</div>
 <section class="section"><div class="wrap narrow prose">
@@ -650,7 +724,7 @@ ${c.route !== null || c.spur !== undefined ? `<div class="wrap-wide hero-route">
   <ul class="related">${others.map((s) => `<li><a href="${svcUrl(s)}">${esc(s.name)}</a></li>`).join('')}</ul>
 </div></section>
 
-${ctaBand(`Booking work in ${esc(c.name)}? We’re about ${c.drive || 5} minutes away.`)}
+${ctaBand(`Need an electrician in ${esc(c.name)}? Tell us about the job and get a written price.`)}
 
 ${faqBlock(faqs, `Electricians in ${c.name}: common questions`)}
 
@@ -905,7 +979,7 @@ function pricingPage() {
   <div class="table-scroll"><table class="util-table price-table">
     <caption>Typical installed prices, including permit, for single-family homes between Sacramento and Colfax</caption>
     <thead><tr><th scope="col">Service</th><th scope="col">Typical price</th><th scope="col">What changes the price</th><th scope="col">Time</th></tr></thead>
-    <tbody>${services.map((s) => `<tr><th scope="row"><a class="price-svc" href="${svcUrl(s)}">${icon(s.slug, 'row-ic')}<span>${esc(s.name)}</span></a></th><td class="price">${esc(s.cost.range)}</td><td>${esc(s.cost.note.replace(/^./, (m) => m.toUpperCase()))}</td><td>${esc(s.time)}</td></tr>`).join('')}</tbody>
+    <tbody>${services.map((s) => `<tr><th scope="row"><a class="price-svc" href="${svcUrl(s)}">${icon(s.slug, 'row-ic')}<span>${esc(s.name)}</span></a></th><td class="price" data-label="Typical price">${esc(s.cost.range)}</td><td data-label="What changes the price">${esc(s.cost.note.replace(/^./, (m) => m.toUpperCase()))}</td><td data-label="Time">${esc(s.time)}</td></tr>`).join('')}</tbody>
   </table></div>
 </div></section>
 <section class="section"><div class="wrap narrow prose">
@@ -1002,7 +1076,7 @@ Sitemap: ${fullUrl('/sitemap.xml')}
 ${services.map((s) => `- [${s.name}](${fullUrl(svcUrl(s))}): ${s.answer} Typical cost: ${s.cost.range}.`).join('\n')}
 
 ## Service areas
-${[...cities].sort((a, b) => a.elev - b.elev).map((c) => `- [Electrician in ${c.name}, CA](${fullUrl(cityUrl(c))}): ${c.county}; utility ${c.utility}; permits ${c.permits}; about ${c.drive} min from Newcastle.`).join('\n')}
+${[...cities].sort((a, b) => a.name.localeCompare(b.name)).map((c) => `- [Electrician in ${c.name}, CA](${fullUrl(cityUrl(c))}): ${c.county}; utility ${c.utility}; permits ${c.permits}.`).join('\n')}
 
 ## Guides (answer-first)
 ${guides.map((g) => `- [${g.q}](${fullUrl(guideUrl(g))}): ${g.answer}`).join('\n')}
@@ -1015,7 +1089,7 @@ ${guides.map((g) => `- [${g.q}](${fullUrl(guideUrl(g))}): ${g.answer}`).join('\n
 - [Contact](${fullUrl('/contact/')})
 `);
   writeFileSync(join(OUT, 'site.webmanifest'), JSON.stringify({
-    name: B.name, short_name: 'Off 80', start_url: '/', display: 'browser', background_color: '#F2F3EE', theme_color: '#1E3B2F',
+    name: B.name, short_name: 'Off 80', start_url: '/', display: 'browser', background_color: '#F0EDE5', theme_color: '#16302F',
     icons: [{ src: '/assets/icon-192.png', sizes: '192x192', type: 'image/png' }, { src: '/assets/icon-512.png', sizes: '512x512', type: 'image/png' }],
   }, null, 2));
   writeFileSync(join(OUT, '_headers'), `/assets/*
@@ -1031,6 +1105,8 @@ if (existsSync(OUT)) rmSync(OUT, { recursive: true });
 mkdirSync(OUT, { recursive: true });
 cpSync('assets', join(OUT, 'assets'), { recursive: true });
 cpSync('static', OUT, { recursive: true });
+// Browser-tab icon: the simple round mark (the full badge is too detailed at 16px)
+writeFileSync(join(OUT, 'favicon.svg'), badge('logo-mark').replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" '));
 home(); servicesIndex(); services.forEach(servicePage);
 areasIndex(); cities.forEach(cityPage);
 about(); faqPage(); contact(); simplePages();
