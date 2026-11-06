@@ -6,9 +6,14 @@ import { business as B, fullUrl } from './src/config.mjs';
 import { services, serviceBySlug } from './src/services.mjs';
 import { cities, cityUrl } from './src/cities.mjs';
 import { generalFaqs } from './src/faqs.mjs';
+import { guides, guideTopics, guideUrl, guideBySlug } from './src/guides.mjs';
+import { glossary } from './src/glossary.mjs';
 
 const OUT = 'dist';
 const TODAY = new Date().toISOString().slice(0, 10);
+const MONTH = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+const firstSentence = (t) => { const parts = t.match(/[^.!?]+[.!?]+(\s|$)/g) || [t]; return (parts[0].length < 60 && parts[1] ? parts[0] + parts[1] : parts[0]).trim(); };
+const guidesFor = (slug) => guides.filter((g) => g.services.includes(slug));
 const pages = []; // for sitemap
 
 // ───────────── helpers ─────────────
@@ -149,7 +154,8 @@ function routeProfile({ current = null, animate = false } = {}) {
 const nav = [
   { url: '/services/', name: 'Services' },
   { url: '/service-areas/', name: 'Service areas' },
-  { url: '/about/', name: 'About' },
+  { url: '/guides/', name: 'Guides' },
+  { url: '/pricing/', name: 'Pricing' },
   { url: '/faq/', name: 'FAQ' },
   { url: '/contact/', name: 'Contact' },
 ];
@@ -177,11 +183,18 @@ const logo = `<a class="logo" href="/" aria-label="${esc(B.name)} home">
   <span class="logo-word"><span class="logo-off">Off 80</span><span class="logo-elec">Electric</span></span>
 </a>`;
 
-function layout({ path, title, description, body, schema = [], crumbs = null, ogType = 'website', bodyClass = '' }) {
+function layout({ path, title, description, body, schema = [], crumbs = null, ogType = 'website', bodyClass = '', pageType = 'WebPage' }) {
   const canonical = fullUrl(path);
+  if (description.length > 158) description = description.slice(0, 156).replace(/[\s,;:]+\S*$/, '') + '…';
   pages.push({ path, priority: path === '/' ? '1.0' : path.split('/').filter(Boolean).length === 1 ? '0.8' : '0.7' });
   const crumbHtml = crumbs ? `<nav class="crumbs wrap" aria-label="Breadcrumb"><ol>${crumbs.map((c, i) => i === crumbs.length - 1 ? `<li aria-current="page">${esc(c.name)}</li>` : `<li><a href="${c.url}">${esc(c.name)}</a></li>`).join('')}</ol></nav>` : '';
-  const allSchema = [businessSchema(), websiteSchema(), ...(crumbs ? [crumbSchema(crumbs)] : []), ...schema].filter(Boolean);
+  const pageSchema = {
+    '@context': 'https://schema.org', '@type': pageType, '@id': canonical + '#webpage', url: canonical, name: title, description,
+    isPartOf: { '@id': fullUrl('/#website') }, about: { '@id': BIZ_ID }, inLanguage: 'en-US', dateModified: TODAY,
+    // Marks the short answer at the top of every page as the part to read aloud or quote
+    speakable: { '@type': 'SpeakableSpecification', cssSelector: ['h1', '.hero-answer', '.lead'] },
+  };
+  const allSchema = [businessSchema(), websiteSchema(), pageSchema, ...(crumbs ? [crumbSchema(crumbs)] : []), ...schema].filter(Boolean);
   return `<!doctype html>
 <html lang="en-US">
 <head>
@@ -259,6 +272,10 @@ function footer() {
       <h2 class="footer-h">Service areas</h2>
       <ul class="footer-cols">${[...cities].sort((a, b) => a.name.localeCompare(b.name)).map((c) => `<li><a href="${cityUrl(c)}">${esc(c.name)}</a></li>`).join('')}</ul>
     </div>
+    <div>
+      <h2 class="footer-h">Answers</h2>
+      <ul><li><a href="/guides/">Homeowner guides</a></li><li><a href="/pricing/">Pricing</a></li><li><a href="/faq/">FAQ</a></li><li><a href="/glossary/">Electrical glossary</a></li><li><a href="/about/">About us</a></li><li><a href="/contact/">Contact</a></li></ul>
+    </div>
   </div>
   <div class="footer-base">
     <span>© ${new Date().getFullYear()} ${esc(B.name)}</span>
@@ -319,6 +336,8 @@ const steps = [
 ];
 const stepsBlock = `<ol class="steps">${steps.map(([h, p]) => `<li><h3>${esc(h)}</h3><p>${esc(p)}</p></li>`).join('')}</ol>`;
 
+const guideList = (list) => `<ul class="q-list">${list.map((g) => `<li><a href="${guideUrl(g)}"><span class="q-q">${esc(g.q)}</span><span class="q-a">${esc(firstSentence(g.answer))}</span></a></li>`).join('')}</ul>`;
+
 // ───────────── pages ─────────────
 function home() {
   const faqs = generalFaqs;
@@ -370,6 +389,12 @@ function home() {
   ${stepsBlock}
 </div></section>
 
+<section class="section" aria-labelledby="ans-h"><div class="wrap">
+  <div class="section-head"><h2 id="ans-h">Straight answers</h2><a class="more" href="/guides/">All guides</a></div>
+  <p class="section-intro">The questions we hear most on job sites between Sacramento and Colfax, answered by a licensed electrician.</p>
+  ${guideList(['panel-upgrade-cost', 'prepare-for-pge-psps', 'breaker-keeps-tripping', 'ev-charger-installation-cost', 'federal-pacific-zinsco-panels', 'who-to-call-power-outage'].map((x) => guideBySlug[x]))}
+</div></section>
+
 ${faqBlock(faqs)}
 ${estimateBlock()}`;
   write('/', layout({
@@ -415,9 +440,15 @@ function servicePage(s) {
   </article>
   <aside class="svc-aside">
     <div class="cost-box">
-      <h2>Typical cost</h2>
+      <h2>At a glance</h2>
       <p class="cost-range">${esc(s.cost.range)}</p>
       <p>${esc(s.cost.note)}</p>
+      <dl class="glance">
+        <div><dt>Time</dt><dd>${esc(s.time)}</dd></div>
+        <div><dt>Permit needed</dt><dd>${esc(s.permit)}</dd></div>
+        <div><dt>Licensed</dt><dd>${esc(B.license)}</dd></div>
+        <div><dt>Service area</dt><dd>Sacramento to Colfax, Grass Valley and Nevada City</dd></div>
+      </dl>
       <p class="cost-fine">Every job is quoted in writing before work starts.</p>
     </div>
     <div class="signs-box">
@@ -428,6 +459,10 @@ function servicePage(s) {
 </div></section>
 
 ${faqBlock(s.faqs, `${s.short}: common questions`)}
+${guidesFor(s.slug).length ? `<section class="section" aria-labelledby="sg-h"><div class="wrap narrow">
+  <h2 id="sg-h">Guides on ${esc(s.short.toLowerCase())}</h2>
+  ${guideList(guidesFor(s.slug))}
+</div></section>` : ''}
 
 <section class="section" aria-labelledby="where-h"><div class="wrap">
   <h2 id="where-h">${esc(s.short)} near you</h2>
@@ -492,6 +527,11 @@ function cityPage(c) {
     ...c.faqs,
     { q: `Who supplies electricity in ${c.name}, CA?`, a: `${c.name} is served by ${c.utility}. We coordinate disconnects, reconnects and service upgrades with ${c.utility} as part of panel and service work.` },
     { q: `Where do I get an electrical permit in ${c.name}?`, a: `Electrical permits for ${c.name} are issued by ${withThe(c.permits)}. We pull the permit and schedule the inspection for you.` },
+    { q: `How much does an electrician cost in ${c.name}?`, a: `Most service calls and small repairs in ${c.name} run $150–$450. Typical project prices: panel upgrades ${serviceBySlug['panel-upgrades'].cost.range}, EV charger installs ${serviceBySlug['ev-charger-installation'].cost.range}, and generator interlocks ${serviceBySlug['generator-installation'].cost.range}. Estimates for projects are free.` },
+    c.utility === 'PG&E'
+      ? { q: `Is ${c.name} affected by PG&E power shutoffs (PSPS)?`, a: c.elev >= 900 ? `Yes. ${c.name} is in the foothills, where PG&E Public Safety Power Shutoffs happen during high fire danger. A permitted generator interlock, standby generator or battery system keeps essentials running.` : `Less often than foothill towns, but PG&E can de-energize any line that passes through high fire-threat areas. Many ${c.name} homeowners add a generator inlet or battery backup as a precaution.` }
+      : { q: `Does ${c.utility} offer rebates for electrical upgrades in ${c.name}?`, a: `${c.utility} has offered incentives for EV chargers, panel upgrades and electrification in recent years. Programs change often, so we confirm what’s currently available before you buy equipment.` },
+    { q: `What electrical problems are common in ${c.name} homes?`, a: firstSentence(c.notes[0]) + ' ' + (c.focus.includes('home-rewiring') ? 'Older homes here often need rewiring or panel replacement.' : c.focus.includes('generator-installation') ? 'Outage preparation is one of the most common requests here.' : 'Adding capacity for EV chargers, solar and spas is one of the most common requests here.') },
     { q: `How quickly can an electrician get to ${c.name}?`, a: c.drive ? `Our shop in Newcastle is about ${c.drive} minutes from ${c.name}. Urgent calls are often seen the same day, and estimates are usually scheduled within a few days.` : `We’re based in Newcastle, so we can usually be there the same day.` },
   ].filter((f, i, arr) => arr.findIndex((g) => g.q === f.q) === i);
   const body = `
@@ -525,6 +565,11 @@ ${c.route !== null || c.spur !== undefined ? `<div class="wrap-wide hero-route">
 </div></section>
 
 ${faqBlock(faqs, `Electricians in ${c.name}: common questions`)}
+
+<section class="section" aria-labelledby="cg-h"><div class="wrap narrow">
+  <h2 id="cg-h">Guides for ${esc(c.name)} homeowners</h2>
+  ${guideList([...new Set(c.focus.flatMap((f) => guidesFor(f)))].slice(0, 5))}
+</div></section>
 
 <section class="section"><div class="wrap">
   <h2>Nearby towns we serve</h2>
@@ -575,8 +620,7 @@ ${estimateBlock()}`;
   write(path, layout({
     path, title: `About ${B.name} | Licensed Electrician in Newcastle, CA`,
     description: `${B.name} is a locally owned, licensed C-10 electrician based in Newcastle, CA, serving the I-80 corridor from Sacramento to Colfax and Grass Valley.`,
-    body, crumbs, ogType: 'profile',
-    schema: [{ '@context': 'https://schema.org', '@type': 'AboutPage', url: fullUrl(path), about: { '@id': BIZ_ID } }],
+    body, crumbs, ogType: 'profile', pageType: 'AboutPage',
   }));
 }
 
@@ -586,6 +630,7 @@ function faqPage() {
   const groups = [
     { h: 'Working with us', faqs: generalFaqs },
     ...services.map((s) => ({ h: s.name, faqs: s.faqs, url: svcUrl(s) })),
+    ...guideTopics.map((t) => ({ h: t.name, faqs: guides.filter((g) => g.topic === t.key).flatMap((g) => [{ q: g.q, a: g.answer }]), url: '/guides/#' + t.key })),
   ];
   const all = groups.flatMap((g) => g.faqs);
   const body = `
@@ -595,7 +640,7 @@ function faqPage() {
 </div></section>
 <section class="section"><div class="wrap narrow">
   <nav class="faq-toc" aria-label="FAQ topics"><ul>${groups.map((g, i) => `<li><a href="#g${i}">${esc(g.h)}</a></li>`).join('')}</ul></nav>
-  ${groups.map((g, i) => `<section class="faq-group" id="g${i}"><h2>${esc(g.h)}</h2><div class="faq-list">${g.faqs.map((f) => `<details><summary><h3>${esc(f.q)}</h3></summary><p>${esc(f.a)}</p></details>`).join('')}</div>${g.url ? `<p class="faq-more"><a href="${g.url}">More about ${esc(g.h.toLowerCase())}</a></p>` : ''}</section>`).join('')}
+  ${groups.map((g, i) => `<section class="faq-group" id="g${i}"><h2>${esc(g.h)}</h2><div class="faq-list">${g.faqs.map((f) => `<details><summary><h3>${esc(f.q)}</h3></summary><p>${esc(f.a)}</p></details>`).join('')}</div>${g.url ? `<p class="faq-more"><a href="${g.url}">${g.url.startsWith('/guides/') ? 'Read the full guides' : `More about ${esc(g.h.toLowerCase())}`}</a></p>` : ''}</section>`).join('')}
 </div></section>
 ${estimateBlock()}`;
   write(path, layout({
@@ -621,7 +666,7 @@ ${estimateBlock()}
   write(path, layout({
     path, title: `Contact | Call ${B.phone} | ${B.name}`,
     description: `Contact ${B.name}, a licensed electrician in Newcastle, CA. Call ${B.phone} or request an estimate online.`,
-    body, crumbs, schema: [{ '@context': 'https://schema.org', '@type': 'ContactPage', url: fullUrl(path), about: { '@id': BIZ_ID } }],
+    body, crumbs, pageType: 'ContactPage',
   }));
 }
 
@@ -634,7 +679,7 @@ function simplePages() {
   write('/privacy/', layout({
     path: '/privacy/', title: `Privacy policy | ${B.name}`, description: `How ${B.name} handles information you send us.`,
     crumbs: [{ name: 'Home', url: '/' }, { name: 'Privacy', url: '/privacy/' }],
-    body: `<section class="hero hero-inner"><div class="wrap"><h1>Privacy policy</h1></div></section>
+    body: `<section class="hero hero-inner"><div class="wrap"><h1>Privacy policy</h1><p class="hero-answer">We only use what you send through our form to answer your request. We don’t sell it, share it or track you with ads.</p></div></section>
 <section class="section"><div class="wrap narrow prose">
 <p>When you send our estimate form, we receive your name, phone number, email address, town and message. We use them only to respond to your request and to provide the work you ask for. We don’t sell or share your information with anyone outside the business, except service providers that host this website and its form.</p>
 <p>This site doesn’t use advertising trackers. To ask what we hold about you or to have it deleted, email <a href="mailto:${B.email}">${esc(B.email)}</a>.</p>
@@ -646,6 +691,143 @@ function simplePages() {
   }).replace('index, follow', 'noindex, follow');
   pages.pop();
   writeFileSync(join(OUT, '404.html'), nf);
+}
+
+function guidePage(g) {
+  const path = guideUrl(g);
+  const topic = guideTopics.find((t) => t.key === g.topic);
+  const crumbs = [{ name: 'Home', url: '/' }, { name: 'Guides', url: '/guides/' }, { name: g.q, url: path }];
+  const svc = g.services.map((x) => serviceBySlug[x]);
+  const related = guides.filter((x) => x.slug !== g.slug && (x.topic === g.topic || x.services.some((y) => g.services.includes(y)))).slice(0, 6);
+  const faqs = g.faqs;
+  const body = `
+<section class="hero hero-inner"><div class="wrap">
+  <h1>${esc(g.q)}</h1>
+  <p class="hero-answer">${esc(g.answer)}</p>
+  <p class="byline">Written by ${esc(B.owner)}, licensed electrician at ${esc(B.name)}. Reviewed ${MONTH}.</p>
+</div></section>
+
+<section class="section"><div class="wrap svc-layout">
+  <article class="prose">
+    ${g.sections.map((sec) => `<h2>${esc(sec.h)}</h2>${sec.p.map((p) => `<p>${esc(p)}</p>`).join('')}`).join('')}
+  </article>
+  <aside class="svc-aside">
+    <div class="signs-box key-facts">
+      <h2>Key facts</h2>
+      <ul>${g.facts.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>
+    </div>
+    <div class="cost-box">
+      <h2>Need this done?</h2>
+      <p>We handle ${svc.map((x) => `<a href="${svcUrl(x)}">${esc(x.short.toLowerCase())}</a>`).join(', ').replace(/, ([^,]*)$/, ' and $1')} from Sacramento to Colfax and Grass Valley.</p>
+      <a class="btn btn-call" href="#estimate">Get an estimate</a>
+    </div>
+  </aside>
+</div></section>
+
+${faqBlock(faqs, 'Related questions')}
+
+<section class="section" aria-labelledby="rg-h"><div class="wrap narrow">
+  <h2 id="rg-h">More guides on ${esc(topic.name.toLowerCase())}</h2>
+  ${guideList(related)}
+</div></section>
+${estimateBlock({ service: svc[0] })}`;
+  const schema = [
+    {
+      '@context': 'https://schema.org', '@type': 'Article', '@id': fullUrl(path + '#article'),
+      headline: g.q, description: g.answer, mainEntityOfPage: { '@id': fullUrl(path) + '#webpage' },
+      author: { '@type': 'Person', name: B.owner, jobTitle: 'Licensed electrician', worksFor: { '@id': BIZ_ID } },
+      publisher: { '@id': BIZ_ID }, dateModified: TODAY, image: fullUrl('/assets/og.png'),
+      about: svc.map((x) => ({ '@type': 'Service', name: x.name, url: fullUrl(svcUrl(x)) })),
+    },
+    faqSchema([{ q: g.q, a: g.answer }, ...faqs]),
+  ];
+  write(path, layout({ path, title: g.title.length <= 48 ? `${g.title} | ${B.name}` : g.title, description: g.meta, body, crumbs, schema, ogType: 'article' }));
+}
+
+function guidesIndex() {
+  const path = '/guides/';
+  const crumbs = [{ name: 'Home', url: '/' }, { name: 'Guides', url: path }];
+  const body = `
+<section class="hero hero-inner"><div class="wrap">
+  <h1>Homeowner guides</h1>
+  <p class="hero-answer">Plain answers to the electrical questions homeowners in Placer, Sacramento, Nevada and El Dorado counties ask most: what things cost, what’s safe, how to get through a PG&amp;E shutoff, and what California code requires. Each guide starts with the short answer.</p>
+</div></section>
+<section class="section"><div class="wrap narrow">
+  <nav class="faq-toc" aria-label="Guide topics"><ul>${guideTopics.map((t) => `<li><a href="#${t.key}">${esc(t.name)}</a></li>`).join('')}</ul></nav>
+  ${guideTopics.map((t) => `<section class="faq-group" id="${t.key}"><h2>${esc(t.name)}</h2>${guideList(guides.filter((g) => g.topic === t.key))}</section>`).join('')}
+  <p class="faq-more">Looking for a term? See the <a href="/glossary/">electrical glossary</a>.</p>
+</div></section>
+${estimateBlock()}`;
+  write(path, layout({
+    path, title: `Electrical Guides for Placer & Sacramento Homeowners | ${B.name}`.replace(' | Off 80 Electric', '').length > 60 ? 'Electrical Guides for Placer & Sacramento Homeowners' : `Electrical Guides | ${B.name}`,
+    description: 'Answer-first guides on electrical costs, safety, PG&E shutoffs, generators, EV charging, older-home wiring and California permits, from a licensed electrician.',
+    body, crumbs, pageType: 'CollectionPage',
+    schema: [{ '@context': 'https://schema.org', '@type': 'ItemList', itemListElement: guides.map((g, i) => ({ '@type': 'ListItem', position: i + 1, name: g.q, url: fullUrl(guideUrl(g)) })) }],
+  }));
+}
+
+function pricingPage() {
+  const path = '/pricing/';
+  const crumbs = [{ name: 'Home', url: '/' }, { name: 'Pricing', url: path }];
+  const num = (t) => (t.match(/\$[\d,]+/g) || []).map((x) => Number(x.replace(/[$,]/g, '')));
+  const faqs = ['electrician-cost-per-hour', 'panel-upgrade-cost', 'ev-charger-installation-cost', 'generator-hookup-cost'].map((x) => ({ q: guideBySlug[x].q, a: guideBySlug[x].answer }));
+  const body = `
+<section class="hero hero-inner"><div class="wrap">
+  <h1>Electrician prices in Placer County and Sacramento</h1>
+  <p class="hero-answer">Most electrical service calls and small repairs in Placer and Sacramento counties cost $150 to $450. Typical project prices: panel upgrades ${esc(serviceBySlug['panel-upgrades'].cost.range)}, Level 2 EV charger installs ${esc(serviceBySlug['ev-charger-installation'].cost.range)}, generator interlocks ${esc(serviceBySlug['generator-installation'].cost.range)}, and full rewires ${esc(serviceBySlug['home-rewiring'].cost.range)}. Every job is quoted in writing first.</p>
+  <p class="byline">Typical ${MONTH} ranges from ${esc(B.name)}. Your price depends on your home; estimates for projects are free.</p>
+</div></section>
+<section class="section"><div class="wrap">
+  <div class="table-scroll"><table class="util-table price-table">
+    <caption>Typical installed prices, including permit, for single-family homes between Sacramento and Colfax</caption>
+    <thead><tr><th scope="col">Service</th><th scope="col">Typical price</th><th scope="col">What changes the price</th><th scope="col">Time</th></tr></thead>
+    <tbody>${services.map((s) => `<tr><th scope="row"><a href="${svcUrl(s)}">${esc(s.name)}</a></th><td class="price">${esc(s.cost.range)}</td><td>${esc(s.cost.note.replace(/^./, (m) => m.toUpperCase()))}</td><td>${esc(s.time)}</td></tr>`).join('')}</tbody>
+  </table></div>
+</div></section>
+<section class="section"><div class="wrap narrow prose">
+  <h2>What affects the price of electrical work</h2>
+  <p>Distance from the panel, access through attics and crawlspaces, whether walls are finished or plaster, and whether your panel has capacity for the new load all change the price. Utility scheduling with PG&amp;E, SMUD or Roseville Electric affects timing more than cost.</p>
+  <p>Rural foothill jobs can cost more because of longer wire runs, rocky trenching and well-pump work. We price those pieces separately so you can see exactly what you’re paying for.</p>
+  <h2>How we quote</h2>
+  <p>Troubleshooting is billed by time, because finding the fault is the work. Projects get a written, fixed price after a free site visit, including permit fees.</p>
+</div></section>
+${faqBlock(faqs, 'Pricing questions')}
+<section class="section"><div class="wrap narrow"><h2>Cost guides</h2>${guideList(guides.filter((g) => g.topic === 'costs'))}</div></section>
+${estimateBlock()}`;
+  write(path, layout({
+    path, title: `Electrician Prices in Placer County & Sacramento (2026)`,
+    description: 'Typical electrician prices in Placer and Sacramento counties: service calls $150–$450, panel upgrades $3,000–$6,500, EV chargers $800–$2,500 and more.',
+    body, crumbs,
+    schema: [faqSchema(faqs), {
+      '@context': 'https://schema.org', '@type': 'OfferCatalog', name: `${B.name} typical prices`,
+      itemListElement: services.map((s) => { const n = num(s.cost.range); return { '@type': 'Offer', itemOffered: { '@type': 'Service', name: s.name, url: fullUrl(svcUrl(s)) }, ...(n.length === 2 ? { priceSpecification: { '@type': 'PriceSpecification', priceCurrency: 'USD', minPrice: n[0], maxPrice: n[1] } } : {}) }; }),
+    }],
+  }));
+}
+
+function glossaryPage() {
+  const path = '/glossary/';
+  const crumbs = [{ name: 'Home', url: '/' }, { name: 'Glossary', url: path }];
+  const sorted = [...glossary].sort((a, b) => a.term.localeCompare(b.term));
+  const body = `
+<section class="hero hero-inner"><div class="wrap">
+  <h1>Electrical glossary</h1>
+  <p class="hero-answer">Plain-English definitions of the electrical terms you’ll see in quotes, inspection reports and utility letters, from amps and AFCI to PSPS and transfer switches.</p>
+</div></section>
+<section class="section"><div class="wrap narrow">
+  <dl class="glossary">${sorted.map((t) => `<div id="${t.id}"><dt>${esc(t.term)}</dt><dd>${esc(t.def)}</dd></div>`).join('')}</dl>
+  <p class="faq-more">Want more than a definition? Read the <a href="/guides/">homeowner guides</a>.</p>
+</div></section>
+${estimateBlock()}`;
+  write(path, layout({
+    path, title: `Electrical Glossary: Terms Explained | ${B.name}`,
+    description: 'Plain-English definitions of electrical terms: amps, service, subpanel, GFCI, AFCI, interlock, transfer switch, PSPS, knob-and-tube and more.',
+    body, crumbs,
+    schema: [{
+      '@context': 'https://schema.org', '@type': 'DefinedTermSet', '@id': fullUrl(path + '#terms'), name: 'Electrical glossary', url: fullUrl(path),
+      hasDefinedTerm: sorted.map((t) => ({ '@type': 'DefinedTerm', name: t.term, description: t.def, url: fullUrl(path + '#' + t.id) })),
+    }],
+  }));
 }
 
 // ───────────── machine-readable files ─────────────
@@ -697,7 +879,12 @@ ${services.map((s) => `- [${s.name}](${fullUrl(svcUrl(s))}): ${s.answer} Typical
 ## Service areas
 ${[...cities].sort((a, b) => a.elev - b.elev).map((c) => `- [Electrician in ${c.name}, CA](${fullUrl(cityUrl(c))}): ${c.county}; utility ${c.utility}; permits ${c.permits}; about ${c.drive} min from Newcastle.`).join('\n')}
 
+## Guides (answer-first)
+${guides.map((g) => `- [${g.q}](${fullUrl(guideUrl(g))}): ${g.answer}`).join('\n')}
+
 ## Pages
+- [Pricing](${fullUrl('/pricing/')}): typical prices for every service
+- [Glossary](${fullUrl('/glossary/')}): plain-English electrical terms
 - [FAQ](${fullUrl('/faq/')})
 - [About](${fullUrl('/about/')})
 - [Contact](${fullUrl('/contact/')})
@@ -722,5 +909,6 @@ cpSync('static', OUT, { recursive: true });
 home(); servicesIndex(); services.forEach(servicePage);
 areasIndex(); cities.forEach(cityPage);
 about(); faqPage(); contact(); simplePages();
+guidesIndex(); guides.forEach(guidePage); pricingPage(); glossaryPage();
 seoFiles();
 console.log(`Built ${pages.length} pages into ./${OUT}`);
